@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const conn = require('../db/connection');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -24,5 +25,5 @@ const userSchema = new mongoose.Schema({
         timestamps: true
     });
 
-const userModel = mongoose.model("User", userSchema);
+const userModel = conn.weewoo_rebrand_URI.model("User", userSchema); // Important: conn.usersDB.model, usually its mongoose.model
 module.exports = userModel;

@@ -4,20 +4,20 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const createToken = (_id) => {
-    return jwt.sign(_id, process.env.JWT_SECRET_KEY);
+    return jwt.sign({ _id }, process.env.JWT_SECRET_KEY);
 };
 
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        if (!name || !password || !email)
+            return res.status(400).json('All fields required!');
+
         const userExists = await userModel.findOne({ email });
 
         if (userExists)
             return res.status(409).json('Email already registered');
-
-        if (!name || !password || !email)
-            return res.status(400).json('All fields required!');
 
         if (!validator.validate(email))
             return res.status(400).json('Please enter a valid email!')
@@ -34,8 +34,7 @@ const registerUser = async (req, res) => {
 
         await user.save();
 
-        const token = createToken(user._id.toString());
-        return res.status(201).json({ message: 'User created successfully', _id: user._id, name, email, token });
+        return res.status(201).json({ message: 'User created successfully', _id: user._id, name, email });
 
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
