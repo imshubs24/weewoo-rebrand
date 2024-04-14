@@ -1,6 +1,6 @@
 
 
-const FoodPreferences = ({ foodOptions, ratingOptions, foodTypes }) => {
+const FoodPreferences = ({ foodOptions, foodTypes }) => {
     return (
         <>
             <div className='w-80 min-h-full h-auto border-r border-black p-2'>
@@ -22,16 +22,6 @@ const FoodPreferences = ({ foodOptions, ratingOptions, foodTypes }) => {
                                 <label key={index} className='flex gap-x-2'>
                                     <input type="checkbox" value={o.option} className='w-4' />
                                     {o.option}
-                                </label>
-                            ))
-                        }
-                    </div>
-                    <div className='flex flex-col text-lg select-none'>
-                        {
-                            ratingOptions.map((o, index) => (
-                                <label key={index} className='flex gap-x-2'>
-                                    <input type="checkbox" value={o.rating} className='w-4' />
-                                    {o.rating}
                                 </label>
                             ))
                         }

@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 import ProfileDropDown from "./ProfileDropDown";
+import { useCart } from "../hooks/CartContext";
+import { useUser } from "../hooks/UserContext";
 
 const Navbar = () => {
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [profileDropDown, setProfileDropDown] = useState(false);
+    const { getTotalCartItems } = useCart();
+    const { isLoggedIn } = useUser();
 
     const handleProfileDropDown = () => {
         setProfileDropDown((prevState) => !prevState)
@@ -26,13 +30,14 @@ const Navbar = () => {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
     }, [])
 
     return (
         <div className={`w-full bg-white ${isScrolled ? 'h-16' : 'h-28'} border-b border-black flex justify-center sticky top-0 z-40`}>
             <div className='flex justify-between w-[75%]'>
-                <div id="logo" className='flex items-center justify-center select-none'>
-                    <p className='font-Mogra text-logo text-red-600'>WEEWOO!</p>
+                <div id="logo" className='flex items-center justify-center select-none '>
+                    <Link to="/" className='font-Mogra text-logo text-red-600 cursor-pointer'>WEEWOO!</Link>
                 </div>
                 <div id="navigate" className='flex justify-center items-center'>
                     <ul className='flex items-center justify-center gap-x-16'>
@@ -44,7 +49,12 @@ const Navbar = () => {
                 </div>
                 <div id="users-tab" className='flex justify-center items-center'>
                     <ul className='flex items-center justify-center gap-x-3'>
-                        <li><Link to="/cart" className='text-xl text-slate-800 hover:text-red-600'><i className="hover:scale-105 ease-linear duration-75 fa-solid fa-cart-shopping"></i></Link></li>
+                        <li className="relative">
+                            <Link to="/cart" className='text-xl text-slate-800 hover:text-red-600 flex justify-center items-center'>
+                                <i className="hover:scale-105 ease-linear duration-75 fa-solid fa-cart-shopping"></i>
+                            </Link>
+                            <span className="absolute text-[0.9rem] font-semibold bg-red-500 px-1 border border-red-500 rounded-full -top-5 left-1 text-white">{getTotalCartItems()}</span>
+                        </li>
                         <li className='text-xl text-slate-800 relative select-none'>
                             <i className="hover:scale-105 ease-linear duration-75 fa-regular fa-user cursor-pointer hover:text-red-600" onClick={handleProfileDropDown}></i>
                             <div

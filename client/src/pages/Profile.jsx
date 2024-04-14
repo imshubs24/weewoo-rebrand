@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const Profile = () => {
     const userInfo = {
         name: 'Shubham Lokhande', email: 'slokhande310@gmail.com', contact: '9876543210', password: '**********', address: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos aperiam iure consequatur ducimus molestiae ea quisquam repudiandae nisi fugit quasi?'
     }
+
+    // scroll windows to top whenver switched to new page
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
 
     return (
         <>

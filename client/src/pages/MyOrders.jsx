@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const MyOrders = () => {
+
+    // scroll windows to top whenver switched to new page
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
+
     return (
         <>
             <div className='min-h-[90vh] h-auto relative w-full flex flex-col items-center'>

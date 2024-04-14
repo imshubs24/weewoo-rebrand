@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import blogSample from '../assets/blog-sample.jpg'
 
 const Blog = () => {
@@ -11,6 +12,11 @@ const Blog = () => {
         { title: 'Mastering the Art of Homemade Pasta: Tips and Tricks', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 30, 2024', image: blogSample },
     ]
 
+    // scroll windows to top whenver switched to new page
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location]);
+
     return (
         <>
             <div className='min-h-dvh h-auto w-full relative flex flex-col'>
@@ -20,10 +26,10 @@ const Blog = () => {
                 <div className="text-white text-7xl h-[50vh] flex justify-center items-center">
                     <h1 className="font-Mogra">BLOG</h1>
                 </div>
-                <div className="w-[60%] h-auto  grid gap-y-10 gap-x-5 grid-cols-3 self-center py-10">
+                <div className="w-[60%] h-auto grid gap-y-10 gap-x-5 grid-cols-3 self-center py-10">
                     {
                         blogs.map((blog, index) =>
-                            <div key={index} className="flex flex-col min-h-[34rem] h-auto items-center py-2 gap-y-4 cursor-pointer group shadow-xl border border-gray-200">
+                            <div key={index} className="flex flex-col min-h-[35rem] items-center py-2 gap-y-4 cursor-pointer group shadow-xl border border-gray-200">
                                 <img src={blog.image} alt="blog.jpg" className='h-72 w-96 group-hover:scale-95 ease-linear duration-150' />
                                 <div className='flex flex-col items-center gap-y-2'>
                                     <p className=' text-gray-500'>{blog.date}</p>

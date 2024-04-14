@@ -12,20 +12,20 @@ const registerUser = async (req, res) => {
         const { name, email, password } = req.body;
 
         if (!name || !password || !email)
-            return res.status(400).json('All fields required!');
+            return res.status(400).json({ error: 'All fields required!' });
 
         const userExists = await userModel.findOne({ email });
 
         if (userExists)
-            return res.status(409).json('Email already registered');
+            return res.status(409).json({ error: 'Email already registered' });
 
         if (!validator.validate(email))
-            return res.status(400).json('Please enter a valid email!')
+            return res.status(400).json({ error: 'Please enter a valid email!' })
 
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
         if (!passwordRegex.test(password)) {
-            return res.status(400).json('Password must be 6 characters or more and contain at least one uppercase and one lowercase character.');
+            return res.status(400).json({ error: 'Password must be 6 characters or more and contain at least one uppercase and one lowercase character.' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
 
         const user = await userModel.findOne({ email });
         if (!user)
-            return res.status(404).json('Invalid login credentials');
+            return res.status(404).json({ error: 'Invalid login credentials' });
 
         const validPassword = await bcrypt.compare(password, user.password);
 
