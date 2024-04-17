@@ -42,6 +42,7 @@ const UserLoginModal = () => {
             if (!response.error) {
                 setFormData({ name: '', email: '', password: '' });
                 localStorage.setItem('authtoken', data.token);
+                login();
                 closeModal();
                 console.log(data);
             } else {

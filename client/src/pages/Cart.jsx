@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
 import { useCart } from '../hooks/CartContext'
+import { loadStripe } from '@stripe/stripe-js';
 
 const Cart = () => {
 
-    const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
+    const { cartItems, removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCart();
 
     const calculateSubtotal = () => {
         let subtotal = 0;
@@ -18,6 +19,40 @@ const Cart = () => {
         const taxRate = 0.05; // 5% tax
         const taxAmount = subtotal * taxRate;
         return subtotal + taxAmount;
+    };
+
+    const makePayment = async () => {
+        try {
+            const authtoken = localStorage.getItem('authtoken');
+            const body = { cartItems };
+
+            const response = await fetch('http://127.0.0.1:4000/api/payment/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authtoken}` },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                console.error(`Error: ${response.status} - ${response.statusText}`);
+                return;
+            }
+
+            const session = await response.json();
+
+            const stripe = await loadStripe("pk_test_51P6S6O2MWNnuvnigXITcRLh2ZAwMepoZBOJesm6Nq5DTpJEAn6f0wV5utEuGjX0Ub4lqnZ7I5Z5tGFv4Ue9eSncA00VvWA4SZv");
+
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+
+            if (result.error) {
+                console.error(result.error);
+            } else {
+                clearCart();
+            }
+        } catch (error) {
+            console.error('Error: ', error);
+        }
     };
 
     // scroll windows to top whenver switched to new page
@@ -60,7 +95,6 @@ const Cart = () => {
                                         </div>
                                     ))
                                 }
-
                             </div>
                             <div className='h-auto w-0.5 mx-2 bg-red-500'></div>
                             <div className='w-1/2 flex flex-col gap-y-3'>
@@ -76,7 +110,7 @@ const Cart = () => {
                                     <p className='text-red-500'>&#x20B9; <span>{calculateTotal().toFixed(2)}</span></p>
                                 </div>
                                 <div className='w-4/6 mt-8'>
-                                    <button className='w-full border border-red-500 hover:bg-red-500 hover:text-white font-medium py-3 bg-white text-black duration-150 ease-linear'>PROCEED TO CHECKOUT</button>
+                                    <button className='w-full border border-red-500 hover:bg-red-500 hover:text-white font-medium py-3 bg-white text-black duration-150 ease-linear' onClick={makePayment}>PROCEED TO CHECKOUT</button>
                                 </div>
                             </div>
                         </div>

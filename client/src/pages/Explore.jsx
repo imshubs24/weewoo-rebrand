@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import sample from '../assets/trending-food/burger.png'
 import FoodPreferences from '../components/explore components/FoodPreferences';
 import { useCart } from '../hooks/CartContext';
+import { ToastContainer } from 'react-toastify';
 
 const Explore = () => {
 
@@ -26,7 +27,6 @@ const Explore = () => {
         } catch (error) {
             console.error('Error: ', error);
         }
-
     };
 
     useEffect(() => {
@@ -63,6 +63,18 @@ const Explore = () => {
 
     return (
         <>
+            <ToastContainer
+                position="bottom-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className='min-h-96 h-auto w-full flex relative'>
                 <FoodPreferences foodOptions={foodOptions} foodTypes={foodTypes} />
                 <div className='min-h-dvh w-4/5 mx-auto py-2 flex flex-col gap-y-4'>
@@ -82,7 +94,7 @@ const Explore = () => {
                                         <div key={index} className='shadow-xl border border-gray-200 h-[27rem] w-80 flex flex-col p-2 justify-start cursor-pointer'>
                                             <div className='flex justify-between'>
                                                 <i className={`fa-solid fa-circle ${item.type ? 'text-green-700 border-green-700' : 'text-red-700 border-red-700'} border-2  flex items-center justify-center px-1`}></i>
-                                                <p id='rating'><i className="fa-solid fa-star text-yellow-500"></i> {item.rating}</p>
+                                                <p id='rating'><i className="fa-solid fa-star text-yellow-500"></i> {item.rating.toFixed(1)}</p>
                                             </div>
                                             <img src={sample} alt="sample.jpg" className='max-h-48 h-48 select-none self-center' />
                                             <div className='flex flex-col items-center gap-y-4 text-center'>

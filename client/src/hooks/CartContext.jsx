@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useToastify } from './ToastifyContext';
 
 // Create a new context
 const CartContext = createContext();
@@ -11,6 +12,7 @@ export const useCart = () => {
 // Provider component to manage cart state
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
+    const { notify } = useToastify();
 
     useEffect(() => {
         const cartFromStorage = JSON.parse(localStorage.getItem('cart'));
@@ -29,8 +31,10 @@ export const CartProvider = ({ children }) => {
             const updatedCart = [...existingCart, { id: item._id, name: item.name, price: item.price, quantity: 1 }];
             setCartItems(updatedCart);
             localStorage.setItem('cart', JSON.stringify(updatedCart));
+            notify('Item added to the cart', 'success');
         } else {
             console.log('Item already in cart');
+            notify('Item already in the cart', 'error');
         }
     };
 
@@ -71,8 +75,13 @@ export const CartProvider = ({ children }) => {
         return cartItems.length;
     };
 
+    const clearCart = () => {
+        setCartItems([]);
+        localStorage.removeItem('cart');
+    }
+
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, getTotalCartItems, removeItem, increaseQuantity, decreaseQuantity }}>
+        <CartContext.Provider value={{ cartItems, addToCart, getTotalCartItems, removeItem, increaseQuantity, decreaseQuantity, clearCart }}>
             {children}
         </CartContext.Provider>
     );

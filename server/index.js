@@ -4,6 +4,7 @@ require('dotenv').config();
 const userRoutes = require('./Routes/userRoutes');
 const foodRoutes = require('./Routes/foodRoutes');
 const orderRoutes = require('./Routes/orderRoutes')
+const paymentRoutes = require('./Routes/paymentRoutes')
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use('/api/users', userRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/payment', paymentRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello From Server Side');
