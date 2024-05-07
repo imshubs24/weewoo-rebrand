@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useCart } from '../hooks/CartContext'
 import { loadStripe } from '@stripe/stripe-js';
 
 const Cart = () => {
 
-    const { cartItems, removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCart();
+    const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
 
     const calculateSubtotal = () => {
         let subtotal = 0;
@@ -47,8 +47,7 @@ const Cart = () => {
 
             if (result.error) {
                 console.error(result.error);
-            } else {
-                clearCart();
+                return;
             }
         } catch (error) {
             console.error('Error: ', error);
@@ -116,7 +115,6 @@ const Cart = () => {
                         </div>
                         : <div className='flex justify-center items-center text-3xl p-10'>NO ITEMS IN THE CART</div>
                 }
-
             </div>
         </>
     )

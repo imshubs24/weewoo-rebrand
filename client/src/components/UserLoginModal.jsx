@@ -4,7 +4,7 @@ import { useUser } from '../hooks/UserContext';
 const UserLoginModal = () => {
 
     const { closeModal } = useModal();
-    const { isLoggedIn, login, logout } = useUser();
+    const { login } = useUser();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -42,6 +42,7 @@ const UserLoginModal = () => {
             if (!response.error) {
                 setFormData({ name: '', email: '', password: '' });
                 localStorage.setItem('authtoken', data.token);
+                localStorage.setItem('email', data.email);
                 login();
                 closeModal();
                 console.log(data);

@@ -16,14 +16,15 @@ import Profile from './pages/Profile'
 import MyOrders from './pages/MyOrders'
 import UserLoginModal from './components/UserLoginModal'
 import { useModal } from './hooks/ModalContext'
+import SuccessfulPayment from './pages/SuccessfulPayment'
 
 const App = () => {
 
-  const { isModalOpen, openModal, closeModal } = useModal();
+  const { isModalOpen } = useModal();
 
   return (
     <BrowserRouter>
-      <div className='w-full h-full flex flex-col items-center relative'>
+      <div className='w-full min-h-full flex flex-col items-center relative'>
         {isModalOpen ? <UserLoginModal /> : null}
         <Navbar />
         <Routes>
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/myorders" element={<MyOrders />} />
+          <Route path="/paymentsuccess" element={<SuccessfulPayment />} />
         </Routes>
         <Footer />
       </div>

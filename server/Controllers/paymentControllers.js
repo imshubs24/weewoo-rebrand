@@ -4,7 +4,6 @@ const checkoutSession = async (req, res) => {
     const { cartItems } = req.body;
 
     const taxRate = 0.05;
-
     try {
         // Calculate tax and final amount for each item
         const lineItems = cartItems.map((item) => {
@@ -17,7 +16,7 @@ const checkoutSession = async (req, res) => {
                     product_data: {
                         name: item.name
                     },
-                    unit_amount: finalAmount * 100 // Convert final amount to paise
+                    unit_amount: finalAmount * 100 //
                 },
                 quantity: item.quantity
             };
@@ -27,8 +26,8 @@ const checkoutSession = async (req, res) => {
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: 'http://localhost:5173/', // Adjust success URL
-            cancel_url: 'http://localhost:5173/cart' // Adjust cancel URL
+            success_url: 'http://localhost:5173/paymentsuccess',
+            cancel_url: 'http://localhost:5173/cart'
         });
 
         res.json({ id: session.id });

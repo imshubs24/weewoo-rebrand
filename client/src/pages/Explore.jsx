@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify';
 
 const Explore = () => {
 
-    const { addToCart } = useCart();
+    const { cartItems, addToCart, removeItem } = useCart();
     const [search, setSearch] = useState('');
     const [foodItems, setFoodItems] = useState([]);
     const [filteredFoodItems, setFilteredFoodItems] = useState([]);
@@ -101,7 +101,11 @@ const Explore = () => {
                                                 <h1 className='font-medium text-lg text-slate-700'>{item.name}</h1>
                                                 <p id='explore-item-desc' className='text-sm text-gray-500 px-5'>{item.description}</p>
                                                 <p id='explore-item-price' className=''><span>&#x20B9;</span> {item.price}</p>
-                                                <p className='border border-red-500 py-2 px-4 cursor-pointer hover:bg-red-500 hover:text-white duration-200 rounded-full select-none' onClick={() => handleAddToCart(item)}>ADD TO CART</p>
+                                                {cartItems.some(cartItem => cartItem.id === item._id) ? (
+                                                    <p className='border border-red-500 py-2 px-4 cursor-pointer hover:bg-red-500 hover:text-white duration-200 rounded-full select-none'><i className="fa-solid fa-check"></i></p>
+                                                ) : (
+                                                    <p className='border border-red-500 py-2 px-4 cursor-pointer hover:bg-red-500 hover:text-white duration-200 rounded-full select-none' onClick={() => handleAddToCart(item)}>ADD TO CART</p>
+                                                )}
                                             </div>
                                         </div>
                                     ))
