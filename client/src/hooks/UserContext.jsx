@@ -21,6 +21,24 @@ export const UserProvider = ({ children }) => {
         setIsLoggedIn(false);
     };
 
+    const getAuthtoken = () => {
+        const authToken = localStorage.getItem('authtoken');
+        if (authToken === null) {
+            console.log('User not logged in');
+            return;
+        }
+        return authToken;
+    }
+
+    const getUserEmail = () => {
+        const userEmail = localStorage.getItem('email');
+        if (userEmail === null) {
+            console.log('User not logged in');
+            return;
+        }
+        return userEmail;
+    }
+
     useEffect(() => {
         if (localStorage.getItem('email') && localStorage.getItem('authtoken')) {
             setIsLoggedIn(true);
@@ -28,7 +46,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ isLoggedIn, login, logout }}>
+        <UserContext.Provider value={{ isLoggedIn, login, logout, getAuthtoken, getUserEmail }}>
             {children}
         </UserContext.Provider>
     );

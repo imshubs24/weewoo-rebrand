@@ -20,6 +20,8 @@ const userSchema = new mongoose.Schema({
         minLength: 6,
         maxLength: 1024
     },
+    contact: { type: String },
+    address: { type: String },
 },
     {
         timestamps: true

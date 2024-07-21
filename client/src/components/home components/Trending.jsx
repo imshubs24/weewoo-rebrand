@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import sample from '../../assets/trending-food/burger.png'
+import { useCart } from '../../hooks/CartContext';
 
 const Trending = () => {
 
+    const { addToCart } = useCart();
+
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const [active, setActive] = useState('daily');
 
     const handleMouseEnter = (index) => {
         setHoveredIndex(index);
@@ -14,13 +18,23 @@ const Trending = () => {
         setHoveredIndex(null);
     };
 
+    const handleClick = (item) => {
+        const lowerCaseItem = item.toLowerCase();
+        setActive(lowerCaseItem);
+    };
+
+    const handleAddToCart = (item) => {
+        console.log(item);
+        addToCart(item);
+    }
+
     const items = [
-        { name: 'Burger', price: 12.00 },
-        { name: 'Burger', price: 12.00 },
-        { name: 'Burger', price: 12.00 },
-        { name: 'Burger', price: 12.00 },
-        { name: 'Burger', price: 12.00 },
-        { name: 'Burger', price: 12.00 }
+        { name: 'Classic Cheeseburger', price: 120 },
+        { name: 'Bacon Avocado Burger', price: 160 },
+        { name: 'Spicy Jalapeno Burger', price: 130 },
+        { name: 'BBQ Ranch Burger', price: 150 },
+        { name: 'Mushroom Swiss Burger', price: 145 },
+        { name: 'Truffle Brie Burger', price: 160 }
     ];
 
     const categories = [
@@ -36,10 +50,10 @@ const Trending = () => {
             </div>
             <div id="trending-category" className="flex gap-x-14 font-semibold text-slate-500 relative">
                 {categories.map((category, index) => (
-                    <p key={index} className="cursor-pointer relative group">
+                    <p key={index} className="cursor-pointer relative group" onClick={() => handleClick(category.name)}>
                         {category.name}
                         <span
-                            className="absolute w-full h-1 bg-red-500 left-0 -bottom-2 z-10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 ease-linear">
+                            className={` ${category.name.toLowerCase() === active ? 'scale-x-100' : 'scale-x-0'} absolute w-full h-1 bg-red-500 left-0 -bottom-2 z-10 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-200 ease-linear`}>
                         </span>
                     </p>
                 ))}
@@ -55,14 +69,9 @@ const Trending = () => {
                         >
                             <img src={sample} alt="sample.jpg" className='size-60' />
                             <p className='text-lg text-slate-700'>{item.name}</p>
-                            <p className='text-red-500'>$<span>{item.price.toFixed(2)}</span></p>
+                            <p className='text-red-500'><span>&#x20B9;</span>{item.price}</p>
                             <div className={`flex flex-col gap-y-2 items-center justify-center text-base select-none`}>
-                                <p className='opacity-0 group-hover:opacity-100 duration-300 py-1 px-2 flex items-center justify-center text-slate-700 gap-x-1 text-sm' >
-                                    <span className='border border-red-500 hover:bg-red-500 hover:text-white px-2 py-1 cursor-pointer'>-</span>
-                                    <span className='px-2 py-1'>0</span>
-                                    <span className='border border-red-500 hover:bg-red-500 hover:text-white px-2 py-1 cursor-pointer'>+</span>
-                                </p>
-                                <p className='opacity-0 group-hover:opacity-100 duration-300 border border-red-500 py-2 px-4 cursor-pointer hover:bg-red-500 hover:text-white rounded-full'>ADD TO CART</p>
+                                <p className='opacity-0 group-hover:opacity-100 duration-300 border border-red-500 py-2 px-4 cursor-pointer hover:bg-red-500 hover:text-white rounded-full' onClick={() => handleAddToCart(item)}>ADD TO CART</p>
                             </div>
                         </div>
                     ))}

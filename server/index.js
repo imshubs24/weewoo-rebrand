@@ -18,7 +18,7 @@ app.use('/api/payment', paymentRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello From Server Side');
-})
+});
 
 const port = process.env.PORT || 8000;
 const hostname = '127.0.0.1';

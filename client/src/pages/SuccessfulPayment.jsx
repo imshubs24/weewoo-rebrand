@@ -5,7 +5,6 @@ const SuccessfulPayment = () => {
 
     const { cartItems, clearCart } = useCart();
 
-
     const totalAmount = () => {
         let subtotal = 0;
         for (const item of cartItems) {

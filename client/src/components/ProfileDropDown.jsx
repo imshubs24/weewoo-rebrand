@@ -16,8 +16,8 @@ const ProfileDropDown = () => {
                         isLoggedIn
                             ?
                             <>
-                                <li className='py-2 w-full my-2'><Link to="/profile" className='p-2 font-medium hover:text-white duration-150 ease-linear'>PROFILE</Link></li>
-                                <li className='py-2 w-full my-2'><Link to="/myorders" className='p-2 font-medium hover:text-white duration-150 ease-linear'>MY ORDERS</Link></li>
+                                <li className='py-2 w-full my-2'><Link to="/profile" className='p-2 font-medium hover:text-white duration-150 ease-linear'>Profile</Link></li>
+                                <li className='py-2 w-full my-2'><Link to="/myorders" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Orders</Link></li>
                             </>
                             : null
                     }

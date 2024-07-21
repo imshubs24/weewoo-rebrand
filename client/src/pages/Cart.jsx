@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useCart } from '../hooks/CartContext'
 import { loadStripe } from '@stripe/stripe-js';
+import { useModal } from '../hooks/ModalContext';
+import { useUser } from '../hooks/UserContext';
 
 const Cart = () => {
 
+    const { openModal } = useModal();
+    const { isLoggedIn } = useUser();
     const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
 
     const calculateSubtotal = () => {
@@ -23,6 +27,11 @@ const Cart = () => {
 
     const makePayment = async () => {
         try {
+            if (!isLoggedIn) {
+                openModal();
+                return;
+            }
+
             const authtoken = localStorage.getItem('authtoken');
             const body = { cartItems };
 
@@ -33,22 +42,23 @@ const Cart = () => {
             });
 
             if (!response.ok) {
+                console.log(response);
                 console.error(`Error: ${response.status} - ${response.statusText}`);
                 return;
             }
 
-            const session = await response.json();
+            const { url } = await response.json();
 
-            const stripe = await loadStripe("pk_test_51P6S6O2MWNnuvnigXITcRLh2ZAwMepoZBOJesm6Nq5DTpJEAn6f0wV5utEuGjX0Ub4lqnZ7I5Z5tGFv4Ue9eSncA00VvWA4SZv");
-
-            const result = await stripe.redirectToCheckout({
-                sessionId: session.id
-            });
-
-            if (result.error) {
-                console.error(result.error);
+            // Open a new blank window immediately
+            const newWindow = window.open('', '_blank');
+            if (!newWindow) {
+                alert('Popup blocker detected! Please allow popups for this site to proceed with payment.');
                 return;
             }
+
+            // Update the new window's location to the Stripe checkout URL
+            newWindow.location.href = url;
+
         } catch (error) {
             console.error('Error: ', error);
         }

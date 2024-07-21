@@ -10,6 +10,14 @@ const UserLoginModal = () => {
         email: '',
         password: ''
     });
+    const [error, setError] = useState('');
+
+    const clearTimeout = () => {
+        setTimeout(() => {
+            setError('');
+        }, 4000);
+    }
+
     const [loginWindow, setLoginWindow] = useState(true);
 
     const handleChange = (e) => {
@@ -21,6 +29,12 @@ const UserLoginModal = () => {
     };
 
     const handleLogin = async () => {
+        if (!formData.email || !formData.password) {
+            setError('*All fields are mandatory');
+            clearTimeout();
+            return;
+        };
+
         try {
             const response = await fetch('http://127.0.0.1:4000/api/users/login', {
                 method: 'POST',
@@ -34,6 +48,8 @@ const UserLoginModal = () => {
                 // Handle login failure
                 const errorData = await response.json();
                 console.error('Login failed: ', errorData.error);
+                setError(errorData.error);
+                clearTimeout();
                 return;
             };
 
@@ -43,9 +59,10 @@ const UserLoginModal = () => {
                 setFormData({ name: '', email: '', password: '' });
                 localStorage.setItem('authtoken', data.token);
                 localStorage.setItem('email', data.email);
+                clearTimeout();
                 login();
                 closeModal();
-                console.log(data);
+                // console.log(data);
             } else {
                 // Handle login failure based on the API response
                 console.error('Login failed:', data.error);
@@ -58,6 +75,15 @@ const UserLoginModal = () => {
     };
 
     const handleRegister = async () => {
+
+        if (!Object.values(formData).every(value => value.trim() !== '')) {
+            setError('*All fields are mandatory');
+            setTimeout(() => {
+                setError('');
+            }, 4000);
+            return;
+        };
+
         try {
             const response = await fetch('http://127.0.0.1:4000/api/users/register', {
                 method: 'POST',
@@ -107,7 +133,8 @@ const UserLoginModal = () => {
                 <div className='absolute bg-red-500 min-h-[30rem] h-auto w-[30rem] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-10 rounded-md shadow-lg shadow-red-800'>
                     <span className='absolute top-4 right-6 font-semibold text-lg select-none cursor-pointer text-white hover:text-black hover:scale-125 duration-150 ease-linear' onClick={closeModal}>X</span>
                     <h1 className='font-Mogra text-logo text-center select-none text-white'>WEEWOO!</h1>
-                    <h1 className='text-3xl text-center font-medium mb-5 text-white'>{loginWindow ? 'Login' : 'Register'}</h1>
+                    <h1 className='text-3xl text-center font-medium mb-4 text-white'>{loginWindow ? 'Login' : 'Register'}</h1>
+                    <p className='text-base text-black font-medium mb-2 h-6'>{error}</p>
                     <form className='flex flex-col items-center gap-y-8 text-white' onSubmit={handleSubmit}>
                         {
                             !loginWindow
@@ -120,7 +147,6 @@ const UserLoginModal = () => {
                                 </div>
                                 : null
                         }
-
                         <div className='w-full'>
                             <input type="email" name="email" id="email"
                                 value={formData.email}
