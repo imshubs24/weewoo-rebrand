@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ProfileField from '../components/ProfileField';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import { useUser } from '../hooks/UserContext';
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const initialUserInfo = {
@@ -11,6 +12,8 @@ const Profile = () => {
         password: '**********',
         address: '',
     };
+
+    const navigate = useNavigate();
 
     const [userInfo, setUserInfo] = useState(initialUserInfo);
     const [editInfo, setEditInfo] = useState({ ...userInfo });
@@ -123,14 +126,18 @@ const Profile = () => {
             console.error('Error while updating user details: ', error);
             return { success: false, error: 'Internal Server Error' };
         }
-
     }
 
     useEffect(() => {
         const userEmail = getUserEmail();
-        getUserDetails();
-        setUserInfo({ ...userInfo, email: userEmail });
-    }, []);
+
+        if (!userEmail) {
+            navigate('/'); // Redirect to '/' if userEmail is not found
+        } else {
+            getUserDetails();
+            setUserInfo((prevUserInfo) => ({ ...prevUserInfo, email: userEmail }));
+        }
+    }, [navigate]);
 
 
     return (

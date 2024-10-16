@@ -17,7 +17,7 @@ const Home = () => {
             <HeroSection />
 
             {/* Trending Component */}
-            <Trending />
+            {/* <Trending /> */}
 
             {/* About Us Component */}
             <AboutUs />
