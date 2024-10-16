@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import sample from '../../assets/home-assets/sample.jpg'
+import sample2 from '../../assets/home-assets/sample2.jpg'
+import sample3 from '../../assets/home-assets/sample3.jpg'
+import sample4 from '../../assets/home-assets/sample4.jpg'
+import sample5 from '../../assets/home-assets/sample5.jpg'
 
-const images = [
-    { id: 1, name: 'sample.jpg' },
-    { id: 2, name: 'sample2.jpg' },
-    { id: 3, name: 'sample3.jpg' },
-    { id: 4, name: 'sample4.jpg' },
-    { id: 5, name: 'sample5.jpg' },
-];
+const images = [sample, sample2, sample3, sample4, sample5];
 
 const HeroSection = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -49,7 +48,8 @@ const HeroSection = () => {
         <>
             <div className="h-[85vh] w-full relative text-slate-100">
                 <div className="h-full w-full absolute -z-10">
-                    <div className={`h-full w-full bg-[url('./assets/home-assets/${images[currentImageIndex].name}')] absolute bg-no-repeat bg-cover bg-center`}>
+                    <div className={`h-full w-full absolute bg-no-repeat bg-cover bg-center`}
+                        style={{ backgroundImage: `url(${images[currentImageIndex]})` }}>
                         <div id="tint" className="absolute h-full w-full top-0 bg-black opacity-50"></div>
                     </div>
                 </div>
