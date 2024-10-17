@@ -26,8 +26,8 @@ const checkoutSession = async (req, res) => {
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: 'http://localhost:5173/paymentsuccess',
-            cancel_url: 'http://localhost:5173/cart'
+            success_url: 'https://weewoo-rebrand.netlify.app/paymentsuccess',
+            cancel_url: 'https://weewoo-rebrand.netlify.app/cart'
         });
 
         res.json({ url: session.url });
