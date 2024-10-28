@@ -9,11 +9,48 @@ const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [profileDropDown, setProfileDropDown] = useState(false);
     const { getTotalCartItems } = useCart();
-    const { isLoggedIn } = useUser();
+    const { isLoggedIn, getAuthtoken, getUserEmail } = useUser();
+    const [name, setName] = useState(null);
 
     const handleProfileDropDown = () => {
         setProfileDropDown((prevState) => !prevState)
     }
+
+    const getUsersName = async () => {
+        const token = getAuthtoken();
+        const email = getUserEmail();
+
+        if (!token || !email) {
+            return;
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:4000/api/users/getUserDetails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Fetching user details failed: ', errorData.error);
+                return;
+            }
+
+            const data = await response.json();
+            setName(data.user.name);
+
+        } catch (error) {
+            console.error('Error while login: ', error);
+        }
+    }
+
+    useEffect(() => {
+        getUsersName();
+    }, [isLoggedIn])
 
     useEffect(() => {
         const handleScroll = () => {
@@ -34,7 +71,7 @@ const Navbar = () => {
     }, [])
 
     return (
-        <div className={`w-full bg-white ${isScrolled ? 'h-16' : 'h-28'} border-b border-black flex justify-center sticky top-0 z-40`}>
+        <div className={`w-full bg-white ${isScrolled ? 'h-16' : 'h-28'} border-b-4 border-red-500 flex justify-center sticky top-0 z-40`}>
             <div className='flex justify-between w-[75%]'>
                 <div id="logo" className='flex items-center justify-center select-none '>
                     <Link to="/" className='font-Mogra text-logo text-red-600 cursor-pointer'>WEEWOO!</Link>
@@ -50,13 +87,15 @@ const Navbar = () => {
                 <div id="users-tab" className='flex justify-center items-center'>
                     <ul className='flex items-center justify-center gap-x-3'>
                         <li className="relative">
-                            <Link to="/cart" className='text-xl text-slate-800 hover:text-red-600 flex justify-center items-center'>
+                            <Link to="/cart" className='text-lg text-slate-800 hover:text-red-500 flex justify-center items-center'>
                                 <i className="hover:scale-105 ease-linear duration-75 fa-solid fa-cart-shopping"></i>
                             </Link>
                             <span className="absolute text-[0.9rem] font-semibold bg-red-500 px-1 border border-red-500 rounded-full -top-5 left-1 text-white">{getTotalCartItems()}</span>
                         </li>
-                        <li className='text-xl text-slate-800 relative select-none'>
+                        <li className='text-lg text-slate-800 relative select-none'>
                             <i className="hover:scale-105 ease-linear duration-75 fa-regular fa-user cursor-pointer hover:text-red-600" onClick={handleProfileDropDown}></i>
+                            {isLoggedIn && <span className="text-sm ml-2 font-medium">hi, {name}</span>}
+
                             <div
                                 className={`${profileDropDown ? 'flex' : 'hidden'} flex-col absolute min-w-52 h-auto bg-white border-2 border-white shadow-xl top-10 -right-5 z-10`}
                                 onMouseLeave={handleProfileDropDown}>

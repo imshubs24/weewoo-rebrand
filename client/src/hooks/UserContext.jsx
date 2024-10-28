@@ -24,7 +24,6 @@ export const UserProvider = ({ children }) => {
     const getAuthtoken = () => {
         const authToken = localStorage.getItem('authtoken');
         if (authToken === null) {
-            console.log('User not logged in');
             return;
         }
         return authToken;
@@ -33,7 +32,6 @@ export const UserProvider = ({ children }) => {
     const getUserEmail = () => {
         const userEmail = localStorage.getItem('email');
         if (userEmail === null) {
-            console.log('User not logged in');
             return;
         }
         return userEmail;

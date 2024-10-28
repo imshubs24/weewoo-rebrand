@@ -13,13 +13,11 @@ const ProfileDropDown = () => {
             <div className='flex flex-col items-center overflow-x-hidden bg-red-500 w-full'>
                 <ul className='text-black text-base flex flex-col items-center w-full text-center'>
                     {
-                        isLoggedIn
-                            ?
-                            <>
-                                <li className='py-2 w-full my-2'><Link to="/profile" className='p-2 font-medium hover:text-white duration-150 ease-linear'>Profile</Link></li>
-                                <li className='py-2 w-full my-2'><Link to="/myorders" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Orders</Link></li>
-                            </>
-                            : null
+                        isLoggedIn &&
+                        <>
+                            <li className='py-2 w-full my-2'><Link to="/profile" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Profile</Link></li>
+                            <li className='py-2 w-full my-2'><Link to="/myorders" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Orders</Link></li>
+                        </>
                     }
                     <li className='py-2 w-full my-2'>
                         {

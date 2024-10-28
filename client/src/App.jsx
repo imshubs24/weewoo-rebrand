@@ -9,6 +9,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import Spinner from './components/Spinner';
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -18,7 +19,7 @@ const Blog = React.lazy(() => import('./pages/Blog'));
 const Cart = React.lazy(() => import('./pages/Cart'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const MyOrders = React.lazy(() => import('./pages/MyOrders'));
-const SuccessfulPayment = React.lazy(() => import('./pages/SuccessfulPayment'));
+const PaymentStatus = React.lazy(() => import('./pages/PaymentStatus'));
 
 const App = () => {
   const { isModalOpen } = useModal();
@@ -28,22 +29,47 @@ const App = () => {
       <div className='w-full min-h-full flex flex-col items-center relative'>
         {isModalOpen && <UserLoginModal />}
         <Navbar />
-        <Suspense fallback={
-          <div className='flex min-h-60'>
-            <div className='self-center w-12 h-12 border-8 border-t-white border-red-500 rounded-full animate-spin'></div>
-          </div>
-        }>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/myorders" element={<MyOrders />} />
-            <Route path="/paymentsuccess" element={<SuccessfulPayment />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route path="/" element={
+            <Suspense fallback={<Spinner />}>
+              <Home />
+            </Suspense>
+          } />
+          <Route path="/explore" element={
+            <Suspense fallback={<Spinner />}>
+              <Explore />
+            </Suspense>
+          } />
+          <Route path="/blog" element={<Suspense fallback={<Spinner />}>
+            <Blog />
+          </Suspense>
+          } />
+          <Route path="/help" element={
+            <Suspense fallback={<Spinner />}>
+              <Help />
+            </Suspense>
+          } />
+          <Route path="/cart" element={
+            <Suspense fallback={<Spinner />}>
+              <Cart />
+            </Suspense>
+          } />
+          <Route path="/profile" element={
+            <Suspense fallback={<Spinner />}>
+              <Profile />
+            </Suspense>
+          } />
+          <Route path="/myorders" element={
+            <Suspense fallback={<Spinner />}>
+              <MyOrders />
+            </Suspense>
+          } />
+          <Route path="/paymentstatus" element={
+            <Suspense fallback={<Spinner />}>
+              <PaymentStatus />
+            </Suspense>
+          } />
+        </Routes>
         <Footer />
       </div>
     </BrowserRouter>

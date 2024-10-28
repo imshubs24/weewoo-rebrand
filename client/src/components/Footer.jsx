@@ -5,11 +5,11 @@ const Footer = () => {
         <>
             <div className='flex justify-center h-96 border border-black w-full bg-[#02060C] text-gray-500 py-10'>
                 <div className='w-[75%] flex justify-evenly'>
-                    <div id='footer-logo' className='flex flex-col items-start select-none'>
+                    <div className='flex flex-col items-start select-none'>
                         <p className='font-Mogra text-logo text-red-600'>WEEWOO!</p>
                         <p>Online Food Delivery App</p>
                     </div>
-                    <div id='footer-company'>
+                    <div>
                         <ul className='flex flex-col gap-y-3'>
                             <li className='text-white font-bold'>Company</li>
                             <li className='cursor-pointer hover:text-gray-300'>About</li>
@@ -17,7 +17,7 @@ const Footer = () => {
                             <li className='cursor-pointer hover:text-gray-300'>Team</li>
                         </ul>
                     </div>
-                    <div id='footer-contact' className='flex flex-col gap-y-8'>
+                    <div className='flex flex-col gap-y-8'>
                         <ul className='flex flex-col gap-y-3'>
                             <li className='text-white font-bold'>Contact Us</li>
                             <li className='cursor-pointer hover:text-gray-300'>Help & Support</li>
@@ -31,7 +31,7 @@ const Footer = () => {
                             <li className='cursor-pointer hover:text-gray-300'>Privacy Policy</li>
                         </ul>
                     </div>
-                    <div id='footer-deliver'>
+                    <div>
                         <ul className='flex flex-col gap-y-3'>
                             <li className='text-white font-bold'>We deliver to:</li>
                             <li>Pune</li>

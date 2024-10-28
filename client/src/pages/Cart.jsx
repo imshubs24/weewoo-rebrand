@@ -33,6 +33,7 @@ const Cart = () => {
             }
 
             const authtoken = localStorage.getItem('authtoken');
+
             const body = { cartItems };
 
             const response = await fetch('http://127.0.0.1:4000/api/payment/create-checkout-session', {
@@ -49,15 +50,8 @@ const Cart = () => {
 
             const { url } = await response.json();
 
-            // Open a new blank window immediately
-            const newWindow = window.open('', '_blank');
-            if (!newWindow) {
-                alert('Popup blocker detected! Please allow popups for this site to proceed with payment.');
-                return;
-            }
-
             // Update the new window's location to the Stripe checkout URL
-            newWindow.location.href = url;
+            window.location.href = url;
 
         } catch (error) {
             console.error('Error: ', error);
@@ -81,8 +75,8 @@ const Cart = () => {
                 {
                     cartItems.length !== 0
                         ? <div className='flex w-[75%] self-center justify-center py-10'>
-                            <div id='cart-items' className='w-1/2'>
-                                <div id='cart-items-header' className='flex justify-between items-center'>
+                            <div className='w-1/2'>
+                                <div className='flex justify-between items-center'>
                                     <p className='font-medium w-48 text-start px-2'>ORDERED ITEMS</p>
                                     <p className='font-medium w-32 text-center px-2'>PRICE</p>
                                     <p className='font-medium w-36 text-center px-2'>QUANTITY</p>
@@ -91,7 +85,7 @@ const Cart = () => {
                                 </div>
                                 {
                                     cartItems.map((item, index) => (
-                                        <div id='cart-items-units' className='mt-5 text-sm flex flex-col gap-y-4' key={index}>
+                                        <div className='mt-5 text-sm flex flex-col gap-y-4' key={index}>
                                             <div className='flex justify-between items-center'>
                                                 <p className='w-48 text-start px-2'>{item.name}</p>
                                                 <p className='w-32 text-center px-2'><span>&#x20B9;</span> {item.price}</p>

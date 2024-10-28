@@ -8,7 +8,6 @@ const ChangePasswordModal = ({handleChangePasswordClick, closeChangePasswordModa
                     <label htmlFor='currentPassword' className='block mb-2'>Current Password</label>
                     <input
                         type='password'
-                        id='currentPassword'
                         name='currentPassword'
                         className='border border-gray-300 p-2 w-full outline-none'
                     // Add onChange and value if you want to handle the input
@@ -18,7 +17,6 @@ const ChangePasswordModal = ({handleChangePasswordClick, closeChangePasswordModa
                     <label htmlFor='newPassword' className='block mb-2'>New Password</label>
                     <input
                         type='password'
-                        id='newPassword'
                         name='newPassword'
                         className='border border-gray-300 p-2 w-full outline-none'
                     // Add onChange and value if you want to handle the input
@@ -28,7 +26,6 @@ const ChangePasswordModal = ({handleChangePasswordClick, closeChangePasswordModa
                     <label htmlFor='confirmPassword' className='block mb-2'>Confirm New Password</label>
                     <input
                         type='password'
-                        id='confirmPassword'
                         name='confirmPassword'
                         className='border border-gray-300 p-2 w-full outline-none'
                     // Add onChange and value if you want to handle the input
