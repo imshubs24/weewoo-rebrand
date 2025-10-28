@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useModal } from '../hooks/ModalContext'
 import { useUser } from '../hooks/UserContext';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const UserLoginModal = () => {
     const { closeModal } = useModal();
@@ -45,7 +46,7 @@ const UserLoginModal = () => {
         setLoading(true);
         setTimeout(async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/api/users/login', {
+                const response = await fetch(`${API_BASE_URL}/api/users/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -85,7 +86,7 @@ const UserLoginModal = () => {
         setLoading(true);
         setTimeout(async () => {
             try {
-                const response = await fetch('http://127.0.0.1:4000/api/users/register', {
+                const response = await fetch(`${API_BASE_URL}/api/users/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

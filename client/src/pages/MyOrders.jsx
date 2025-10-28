@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useModal } from '../hooks/ModalContext';
 import { useUser } from '../hooks/UserContext';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const MyOrders = () => {
 
@@ -17,7 +18,7 @@ const MyOrders = () => {
             }
 
             const authtoken = localStorage.getItem('authtoken');
-            const response = await fetch('http://127.0.0.1:4000/api/order/getorder', {
+            const response = await fetch(`${API_BASE_URL}/api/order/getorder`, {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${authtoken}` }
             });
@@ -60,7 +61,7 @@ const MyOrders = () => {
                                 orders.map((order) => (
                                     <div className='h-96 md:max-w-[28rem] w-auto overflow-y-auto flex flex-col mb-3 bg-gray-200 p-3 max-md:w-full' key={order._id}>
                                         <p className='p-3 text-center border border-red-500 font-medium'>Order Date: {order.order_date[0]} @ {order.order_date[1]}</p>
-                                        { order.order_items && 
+                                        {order.order_items &&
                                             order.order_items.map((item) => (
                                                 <ul className='flex flex-col border-b border-red-500' key={item.name}>
                                                     <li>Item: <span>{item.name}</span></li>

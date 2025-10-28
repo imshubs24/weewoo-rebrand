@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useCart } from '../hooks/CartContext'
 import { loadStripe } from '@stripe/stripe-js';
 import { useModal } from '../hooks/ModalContext';
 import { useUser } from '../hooks/UserContext';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Cart = () => {
-
     const { openModal } = useModal();
     const { isLoggedIn } = useUser();
     const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
@@ -36,7 +36,7 @@ const Cart = () => {
 
             const body = { cartItems };
 
-            const response = await fetch('http://127.0.0.1:4000/api/payment/create-checkout-session', {
+            const response = await fetch(`${API_BASE_URL}/api/payment/create-checkout-session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authtoken}` },
                 body: JSON.stringify(body)

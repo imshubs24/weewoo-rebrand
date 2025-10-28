@@ -3,6 +3,7 @@ import ProfileField from '../components/ProfileField';
 import ChangePasswordModal from '../components/ChangePasswordModal';
 import { useUser } from '../hooks/UserContext';
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -65,7 +66,7 @@ const Profile = () => {
         });
 
         try {
-            const response = await fetch('http://127.0.0.1:4000/api/users/updateUserDetails', {
+            const response = await fetch(`${API_BASE_URL}/api/users/updateUserDetails`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

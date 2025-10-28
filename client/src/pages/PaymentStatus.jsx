@@ -3,6 +3,7 @@ import success from '../assets/payment-assets/success.png'
 import cross from '../assets/payment-assets/cross.png'
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/CartContext';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const PaymentStatus = () => {
     const [message, setMessage] = useState('Processing your payment...');
@@ -28,7 +29,7 @@ const PaymentStatus = () => {
             if (sessionId) {
                 try {
                     // Call the backend to verify the payment and save the order
-                    const response = await fetch(`http://127.0.0.1:4000/api/payment/payment-success?session_id=${sessionId}`, {
+                    const response = await fetch(`${API_BASE_URL}/api/payment/payment-success?session_id=${sessionId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authtoken}` }
                     });

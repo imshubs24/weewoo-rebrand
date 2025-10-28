@@ -5,6 +5,7 @@ import FoodPreferences from '../components/explore components/FoodPreferences';
 import { useCart } from '../hooks/CartContext';
 import { ToastContainer } from 'react-toastify';
 import Spinner from '../components/Spinner';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Explore = () => {
 
@@ -17,7 +18,7 @@ const Explore = () => {
 
     const loadData = async () => {
         try {
-            let response = await fetch('http://127.0.0.1:4000/api/food/getallfooditems', {
+            let response = await fetch(`${API_BASE_URL}/api/food/getallfooditems`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
