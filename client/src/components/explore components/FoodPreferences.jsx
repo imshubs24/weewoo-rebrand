@@ -21,7 +21,7 @@ const FoodPreferences = ({ foodOptions, foodTypes, onFoodTypesChange, onOptionsC
 
     return (
         <>
-            <div className='w-80 min-h-full h-auto border-r border-black p-2'>
+            <div className='w-64 min-h-full h-auto border-r border-black p-2 max-xl:hidden'>
                 <div className="flex flex-col gap-y-5 fixed z-10">
                     <h1 className='text-xl'>Food Preferences</h1>
                     <div className='flex flex-col text-lg select-none'>

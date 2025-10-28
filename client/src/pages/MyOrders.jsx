@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useModal } from '../hooks/ModalContext';
 import { useUser } from '../hooks/UserContext';
 
@@ -54,18 +54,23 @@ const MyOrders = () => {
                     <h1 className="font-Mogra">My Orders</h1>
                 </div>
                 <div className='w-full flex justify-center'>
-                    <div className='relative grid w-[80%] p-3 gap-x-14 gap-y-5 place-content-between grid-cols-3'>
+                    <div className='relative grid w-[80%] p-3 gap-x-14 gap-y-5 place-content-between grid-cols-3 max-2xl:w-full max-xl:gap-x-2 max-lg:grid-cols-2 max-md:grid-cols-1'>
                         {
                             orders.length !== 0 ?
                                 orders.map((order) => (
-                                    <div className='h-96 w-[28rem] overflow-y-auto flex flex-col mb-3 bg-gray-200 p-3' key={order._id}>
-                                        <div className='p-3 text-center border border-red-500 font-medium'>Order Date: {order.order_date}</div>
-                                        <div className='flex flex-col border-b border-red-500'>
-                                            <p>Name: <span>Mushroom Swiss Burger</span></p>
-                                            <p>Qty: <span>1</span></p>
-                                            <p>Price: <span>$8.49</span></p>
-                                        </div>
-                                        <div className='text-lg font-medium text-red-500 mt-2'>Total: <span>$8.49</span></div>
+                                    <div className='h-96 md:max-w-[28rem] w-auto overflow-y-auto flex flex-col mb-3 bg-gray-200 p-3 max-md:w-full' key={order._id}>
+                                        <p className='p-3 text-center border border-red-500 font-medium'>Order Date: {order.order_date[0]} @ {order.order_date[1]}</p>
+                                        { order.order_items && 
+                                            order.order_items.map((item) => (
+                                                <ul className='flex flex-col border-b border-red-500' key={item.name}>
+                                                    <li>Item: <span>{item.name}</span></li>
+                                                    <li>Qty: <span>{item.quantity}</span></li>
+                                                    <li>Price: <span>Rs. {item.price}</span></li>
+                                                </ul>
+                                            ))
+                                        }
+
+                                        <p className='text-lg font-medium mt-2'>Total: <span className='text-red-500 '>Rs. {order.totalAmount.toFixed(2)}</span></p>
                                     </div>
                                 ))
                                 : <p className='absolute text-xl -translate-x-1/2 -translate-y-1/2 left-1/2 top-2/3 font-medium underline underline-offset-4'>No Orders Found</p>

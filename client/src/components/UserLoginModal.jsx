@@ -54,6 +54,7 @@ const UserLoginModal = () => {
                 });
 
                 const data = await response.json();
+                console.log(data)
 
                 if (!response.ok) {
                     setError(data.error || 'Login failed');
@@ -64,6 +65,7 @@ const UserLoginModal = () => {
                 // Success actions
                 localStorage.setItem('authtoken', data.token);
                 localStorage.setItem('email', data.email);
+                localStorage.setItem('name', data.name);
                 login();
                 closeModal();
                 setFormData({});

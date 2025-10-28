@@ -116,7 +116,7 @@ const Explore = () => {
                     onFoodTypesChange={handleFoodTypesChange}
                     onOptionsChange={handleOptionsChange}
                 />
-                <div className='min-h-dvh w-4/5 mx-auto py-2 flex flex-col gap-y-4'>
+                <div className='min-h-dvh w-4/5 mx-auto py-2 flex flex-col gap-y-4 max-xl:w-[98%] max-md:w-full'>
                     <div className='flex justify-center'>
                         <input
                             type="search"
@@ -127,10 +127,10 @@ const Explore = () => {
                     </div>
                     {
                         foodItems.length !== 0
-                            ? <div className='w-auto grid grid-cols-4 max-2xl:grid-cols-3 max-xl:grid-cols-2 gap-y-10 gap-x-10'>
+                            ? <div className='w-auto grid grid-cols-4 max-2xl:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1 max-sm:px-1 gap-y-5 gap-x-5 max-xl:gap-x-3'>
                                 {
                                     filteredFoodItems.map((item) => (
-                                        <div key={item._id} className='shadow-xl border border-gray-200 h-[30rem] w-80 flex flex-col p-2 gap-y-2 justify-start cursor-pointer'>
+                                        <div key={item._id} className='shadow-xl border border-gray-200 h-[30rem] w-80 max-xl:w-full flex flex-col p-2 gap-y-2 justify-start cursor-pointer'>
                                             <div className='flex justify-between'>
                                                 <i className={`fa-solid fa-circle ${item.veg_or_nonveg === 'veg' ? 'text-green-700 border-green-700' : 'text-red-700 border-red-700'} border-2  flex items-center justify-center px-1`}></i>
                                                 <p ><i className="fa-solid fa-star text-yellow-500"></i> {item.rating.toFixed(1)}</p>

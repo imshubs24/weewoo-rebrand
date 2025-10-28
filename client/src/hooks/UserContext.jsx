@@ -37,6 +37,14 @@ export const UserProvider = ({ children }) => {
         return userEmail;
     }
 
+    const getUserName = () => {
+        const userName = localStorage.getItem('name');
+        if (userName === null) {
+            return;
+        }
+        return userName;
+    }
+
     useEffect(() => {
         if (localStorage.getItem('email') && localStorage.getItem('authtoken')) {
             setIsLoggedIn(true);
@@ -44,7 +52,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ isLoggedIn, login, logout, getAuthtoken, getUserEmail }}>
+        <UserContext.Provider value={{ isLoggedIn, login, logout, getAuthtoken, getUserEmail, getUserName }}>
             {children}
         </UserContext.Provider>
     );

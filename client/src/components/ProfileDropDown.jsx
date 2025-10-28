@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useModal } from '../hooks/ModalContext'
 import { useUser } from '../hooks/UserContext'
 
@@ -7,6 +7,17 @@ const ProfileDropDown = () => {
 
     const { isLoggedIn, logout } = useUser();
     const { openModal } = useModal();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Perform logout first
+        logout();
+
+        // Force navigation on the next tick, ensuring the logout state update completes
+        setTimeout(() => {
+            navigate('/');
+        }, 0);
+    };
 
     return (
         <>
@@ -23,7 +34,7 @@ const ProfileDropDown = () => {
                         {
                             !isLoggedIn
                                 ? <Link className='px-2 font-medium hover:text-white duration-150 ease-linear' onClick={openModal}>Login/Signup</Link>
-                                : <Link className='px-2 font-medium hover:text-white duration-150 ease-linear' onClick={() => logout()}>Logout</Link>
+                                : <Link className='px-2 font-medium hover:text-white duration-150 ease-linear' onClick={handleLogout} >Logout</Link>
                         }
                     </li>
                 </ul>
