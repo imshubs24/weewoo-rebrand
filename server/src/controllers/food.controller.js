@@ -1,98 +1,164 @@
-const foodCategoryModel = require('../models/FoodCategory');
-const foodMenuModel = require('../models/FoodMenu');
-
-// add new food category route
-const addFoodCategory = async (req, res) => {
-    try {
-        let { category } = req.body;
-        const { user, token } = req;
-
-        if (!category) {
-            return res.status(400).json('All fields required!');
-        };
-
-        category = category.toLowerCase();
-
-        const categoryExists = await foodCategoryModel.findOne({ category });
-
-        if (categoryExists) {
-            return res.status(409).json('Category already exists');
-        };
-
-        const newCategory = new foodCategoryModel({ category });
-        await newCategory.save();
-
-        return res.status(201).json({ message: 'New category added successfully', category });
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
-    };
-};
-
-// fetch all food categories
-const getAllFoodCategories = async (req, res) => {
-    try {
-        const categories = await foodCategoryModel.find();
-
-        if (categories.length === 0) {
-            return res.status(409).json('No Food Categories Available');
-        };
-
-        return res.status(200).json({ categories });
-
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
-    };
-};
+const FoodMenu = require('../models/FoodMenu');
+const FoodCategory = require("../models/FoodCategory");
 
 // add  new food menu item
-const addFoodMenu = async (req, res) => {
+const createFood = async (req, res, next) => {
     try {
-        let { name, category, price, rating, image_url, description, type } = req.body;
+        const { name, category, price, image, description } = req.body;
 
-        if (!name || !category || !price || !rating || !image_url || !description || !type) {
-            return res.status(400).json('All fields required!');
-        };
+        if (!name || !category || price === undefined) {
+            return res.status(400).json({
+                success: false,
+                message: "Name, category and price are required",
+            });
+        }
 
-        name = name.toLowerCase();
-        category = category.toLowerCase();
-
-        const categoryExists = await foodCategoryModel.findOne({ category });
+        const categoryExists = await FoodCategory.findById(category);
 
         if (!categoryExists) {
-            const newCategory = new foodCategoryModel({ category });
-            await newCategory.save();
-        };
+            return res.status(404).json({
+                success: false,
+                message: "Category does not exist",
+            });
+        }
 
-        const itemExists = await foodMenuModel.findOne({ $and: [{ name, category }] });
+        const foodExists = await FoodMenu.findOne({
+            name: name.trim(),
+            category,
+        });
 
-        if (itemExists) {
-            return res.status(409).json('This food item already exists');
-        };
+        if (foodExists) {
+            return res.status(409).json({
+                success: false,
+                message: "Food already exists",
+            });
+        }
 
-        const newFoodItem = new foodMenuModel({ name, category, price, rating, image_url, description, type });
-        await newFoodItem.save();
+        const newFood = await FoodMenu.create({
+            name: name.trim(),
+            category,
+            price,
+            image,
+            description,
+        });
 
-        return res.status(201).json({ message: 'New food item added successfully', newFoodItem });
+        return res.status(201).json({
+            success: false,
+            message: "Food item created successfully",
+            newFood
+        });
 
     } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
     };
 };
 
 // get all food items 
-const getAllFoodItems = async (req, res) => {
+const getAllFoods = async (req, res, next) => {
     try {
-        const foodItems = await foodMenuModel.find();
+        const foodItems = await FoodMenu.find()
+            .populate("category");
 
-        if (foodItems.length === 0) {
-            return res.status(409).json('No Food Items Available');
-        };
-
-        return res.status(200).json({ foodItems });
+        return res.status(200).json({
+            success: true,
+            foodItems,
+        });
 
     } catch (error) {
-        return res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
     };
 };
 
-module.exports = { addFoodCategory, getAllFoodCategories, addFoodMenu, getAllFoodItems };
+const getFoodById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const foodItem = await FoodMenu.findById(id)
+            .populate("category");
+
+        if (!foodItem) {
+            return res.status(404).json({
+                success: false,
+                message: "Food item does not exist",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            foodItem,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updateFood = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, category, price, image, description } = req.body;
+
+        const foodItem = await FoodMenu.findById(id);
+
+        if (!foodItem) {
+            return res.status(404).json({
+                success: false,
+                message: "Food item does not exist",
+            });
+        }
+
+        if (category) {
+            const categoryExists = await FoodCategory.findById(category);
+
+            if (!categoryExists) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Category does not exist",
+                });
+            }
+
+            foodItem.category = category;
+        }
+
+        if (name) foodItem.name = name.trim();
+        if (price !== undefined) foodItem.price = price;
+        if (image !== undefined) foodItem.image = image;
+        if (description !== undefined) foodItem.description = description;
+
+        await foodItem.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Food item updated successfully",
+            food: foodItem,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+const deleteFood = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const foodItem = await FoodMenu.findByIdAndDelete(id);
+
+        if (!foodItem) {
+            return res.status(404).json({
+                success: false,
+                message: "Food item does not exist",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Food item deleted successfully",
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { createFood, getAllFoods, getFoodById, updateFood, deleteFood };

@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/authentication');
-const { addFoodCategory, getAllFoodCategories, addFoodMenu, getAllFoodItems } = require('../controllers/food.controller')
+const authenticate = require('../middleware/auth.middleware');
+const authorize = require("../middleware/role.middleware")
+const { createFood, getAllFoods, getFoodById, updateFood, deleteFood } = require('../controllers/food.controller');
 
-// add and get food category routes
-router.post('/addfoodcategory', auth, addFoodCategory);
-router.get('/getallfoodcategories', getAllFoodCategories);
+router.post('/', authenticate, authorize("admin"), createFood);
 
+router.get('/', getAllFoods);
 
-// add and get food menu routes
-router.post('/addfoodmenuitem', auth, addFoodMenu);
-router.get('/getallfooditems', getAllFoodItems);
+router.get('/:id', getFoodById);
+
+router.put('/:id', authenticate, authorize("admin"), updateFood);
+
+router.delete('/:id', authenticate, authorize("admin"), deleteFood);
 
 module.exports = router;

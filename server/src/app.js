@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const errorMiddleware = require("./middleware/error.middleware");
 
 const app = express();
 
@@ -18,9 +19,16 @@ app.get("/api/test", (req, res) => {
 });
 
 // routes
-app.use("/api/auth", require("./Routes/auth.routes"));
-app.use("/api/food", require("./Routes/food.routes"));
-app.use("/api/order", require("./Routes/order.routes"));
-app.use("/api/payment", require("./Routes/payment.routes"));
+app.use("/api/auth", require("./routes/auth.routes"));
+
+app.use("/api/category", require("./routes/category.routes"));
+
+app.use("/api/food", require("./routes/food.routes"));
+
+app.use("/api/order", require("./routes/order.routes"));
+
+app.use("/api/payment", require("./routes/payment.routes"));
+
+app.use(errorMiddleware);
 
 module.exports = app;
