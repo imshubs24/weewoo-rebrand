@@ -1,104 +1,166 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { newOrder } = require('./order.controller')
 const Session = require('../models/sessionSchema')
+const Order = require("../models/Order");
+const FoodMenu = require("../models/FoodMenu");
 
-const checkoutSession = async (req, res) => {
-    const { cartItems } = req.body;
-
-    const taxRate = 0.05;
+const checkoutSession = async (req, res, next) => {
     try {
-        // Calculate tax and final amount for each item
-        const lineItems = cartItems.map((item) => {
-            const taxAmount = item.price * taxRate;
-            const finalAmount = item.price + taxAmount;
+        const { cartItems, deliveryAddress } = req.body;
 
-            return {
+        if (!cartItems || cartItems.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "No items in the cart",
+            });
+        }
+
+        if (
+            !deliveryAddress?.street ||
+            !deliveryAddress?.city ||
+            !deliveryAddress?.state ||
+            !deliveryAddress?.pincode
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Complete delivery address is required",
+            });
+        }
+
+        const lineItems = [];
+        const taxRate = 0.05;
+
+        for (const item of cartItems) {
+            const foodItem = await FoodMenu.findById(item.food);
+
+            if (!foodItem) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Food item does not exist",
+                });
+            }
+
+            if (!foodItem.isAvailable) {
+                return res.status(400).json({
+                    success: false,
+                    message: `${foodItem.name} is currently unavailable`,
+                });
+            }
+
+            const priceWithTax = foodItem.price * (1 + taxRate);
+
+            lineItems.push({
                 price_data: {
-                    currency: 'INR',
+                    currency: "INR",
                     product_data: {
-                        name: item.name
+                        name: foodItem.name,
                     },
-                    unit_amount: finalAmount * 100 //
+                    unit_amount: Math.round(priceWithTax * 100),
                 },
-                quantity: item.quantity
-            };
-        });
+                quantity: item.quantity,
+            });
+        }
 
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
+            payment_method_types: ["card"],
             line_items: lineItems,
-            mode: 'payment',
+            mode: "payment",
             success_url: `http://localhost:5173/paymentstatus?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: 'http://localhost:5173/cart'
+            cancel_url: "http://localhost:5173/cart",
         });
 
-        // Save session data (cart items) in MongoDB
         const newSession = new Session({
             sessionId: session.id,
-            cartItems
+            cartItems,
+            deliveryAddress,
         });
 
         await newSession.save();
 
-        return res.json({ url: session.url });
+        return res.status(200).json({
+            success: true,
+            url: session.url,
+        });
+
     } catch (error) {
-        console.error('Error creating checkout session:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
     }
 };
 
-const paymentSuccess = async (req, res) => {
-    const { session_id } = req.query; // Extract the session_id from the query params
-
+const paymentSuccess = async (req, res, next) => {
     try {
-        // Retrieve the session from Stripe using the session ID
+
+        const { session_id } = req.query;
+
+        if (!session_id) {
+            return res.status(400).json({
+                success: false,
+                message: "Stripe session ID is required",
+            });
+        }
+
+        // Get the payment session from Stripe using above ID
         const session = await stripe.checkout.sessions.retrieve(session_id);
-        const { email } = req.user;
 
-        // Check if payment was successful
-        if (session.payment_status === 'paid') {
-            // Payment is successful, now we save the order to the database
+        if (session.payment_status !== "paid") {
+            return res.status(400).json({
+                success: false,
+                message: "Payment was not successful",
+            });
+        }
 
-            // Fetch session data (cart items) from MongoDB
-            const sessionData = await Session.findOne({ sessionId: session_id });
+        // Get the temporary cart/session data
+        const sessionData = await Session.findOne({
+            sessionId: session_id,
+        });
 
-            if (!sessionData || sessionData.cartItems.length === 0) {
-                return res.status(404).json({ error: 'No items found in the cart' });
+        if (!sessionData || sessionData.cartItems.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No cart items found",
+            });
+        }
+
+        const orderItems = [];
+
+        for (const item of sessionData.cartItems) {
+            const foodItem = await FoodMenu.findById(item.food);
+
+            if (!foodItem) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Food item does not exist",
+                });
             }
 
-            // Extract relevant order data from the session
-            const totalAmount = session.amount_total / 100; // Convert back from cents
-
-            const order_date_time = [];
-            const date = new Date(Date.now());
-
-            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-            const dayDate = date.toLocaleDateString('en-US', options);
-            order_date_time.push(dayDate);
-            const time = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            order_date_time.push(time);
-
-            const order_date = [...order_date_time];
-
-            // Use parsedCartItems to create order_data
-            const order_data = sessionData.cartItems.map(item => ({
-                name: item.name,
+            orderItems.push({
+                food: foodItem._id,
                 quantity: item.quantity,
-                price: item.price // Already in the correct format
-            }));
-
-            // Call your newOrder function to store the order in the database
-            const orderReq = {
-                body: { email, order_data, order_date, totalAmount }
-            };
-
-            await newOrder(orderReq, res); // Save order to DB
-
-            // Remove session data from MongoDB after successful order
-            await Session.deleteOne({ sessionId: session_id });
-        } else {
-            return res.status(400).json({ error: 'Payment not successful' });
+                price: foodItem.price,
+            });
         }
+
+        const totalAmount = session.amount_total / 100;
+
+        const order = await Order.create({
+            user: req.user._id,
+            items: orderItems,
+            totalAmount,
+            deliveryAddress: req.body.deliveryAddress,
+            paymentStatus: "paid",
+            orderStatus: "placed",
+        });
+
+        await Session.deleteOne({
+            sessionId: session_id
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "Payment successful and order created",
+            order,
+        });
+
     } catch (error) {
         console.error('Error retrieving session or saving order:', error);
         res.status(500).json({ error: 'Internal Server Error' });

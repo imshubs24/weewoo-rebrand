@@ -1,65 +1,200 @@
-const orderModel = require('../models/Order');
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
+const Order = require('../models/Order');
+const FoodMenu = require("../models/FoodMenu");
 
-const newOrder = async (req, res) => {
+const createOrder = async (req, res, next) => {
     try {
-        const { email, order_data, order_date, totalAmount } = req.body;
+        const { items, deliveryAddress } = req.body;
 
-        // Prepare the new order data
-        const newOrderData = {
-            _id: new ObjectId(), // Assign the generated ObjectId
-            order_date,
-            totalAmount,
-            order_items: order_data
-        };
-
-        // Find if there's a previous order associated with the user's email
-        const previousOrder = await orderModel.findOne({ email });
-
-        if (!previousOrder) {
-            // If no previous order exists, create a new order document
-            await orderModel.create({ email, order_data: [newOrderData] });
-            return res.status(201).json({
-                message: 'New User Order Created Successfully',
-                status: 'success',
-                data: newOrderData
-            });
-        } else {
-            // If a previous order exists, update the existing order document
-            await orderModel.findOneAndUpdate(
-                { email },
-                { $push: { order_data: newOrderData } }, // Ensure the field matches your schema
-            );
-            return res.status(200).json({
-                message: 'User\'s order data updated successfully',
-                status: 'success',
-                data: newOrderData,
-                totalAmount
+        if (!items || items.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Order must contain atleast one food item",
             });
         }
+
+        if (
+            !deliveryAddress?.street ||
+            !deliveryAddress?.city ||
+            !deliveryAddress?.state ||
+            !deliveryAddress?.pincode
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Complete delivery address is required",
+            });
+        }
+
+        const orderItems = [];
+        let totalAmount = 0;
+
+        for (const item of items) {
+            const foodItem = await FoodMenu.findById(item.food);
+
+            if (!foodItem) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Food item does not exist",
+                });
+            }
+
+            if (!foodItem.isAvailable) {
+                return res.status(400).json({
+                    success: false,
+                    message: `${foodItem} is currently unavailable`,
+                });
+            }
+
+            const itemTotal = foodItem.price * item.quantity;
+
+            orderItems.push({
+                food: foodItem._id,
+                quantity: item.quantity,
+                price: foodItem.price,
+            });
+
+            totalAmount += itemTotal;
+        }
+
+        const order = await Order.create({
+            user: req.user._id,
+            items: orderItems,
+            totalAmount,
+            deliveryAddress,
+        });
+
+        return res.status(201).json({
+            success: false,
+            message: "Order created successfully",
+            order,
+        });
+
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
     }
 };
 
-
-const getOrders = async (req, res) => {
+const getMyOrders = async (req, res, next) => {
     try {
-        const { email } = req.user;
+        const orders = await Order.find({
+            user: req.user._id,
+        })
+            .populate("items.food");
 
-        const myOrders = await orderModel.findOne({ email });
+        return res.status(200).json({
+            success: true,
+            orders,
+        });
 
-        if (!myOrders) {
-            return res.status(404).json({ message: 'No orders placed yet' });
-        };
-
-        return res.status(200).json({ myOrders: myOrders.order_data });
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
     }
-
 };
 
-module.exports = { newOrder, getOrders };
+const getOrderById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const order = await Order.findOne({
+            _id: id,
+            user: req.user._id,
+        })
+            .populate("items.food");
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order does not exist",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            order,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+const cancelOrder = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const order = await Order.findOne({
+            _id: id,
+            user: req.user._id,
+        });
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order does not exist"
+            });
+        }
+
+        if (order.orderStatus !== "placed" && order.orderStatus !== "confirmed") {
+            return res.status(400).json({
+                success: false,
+                message: "Order cannot be cancelled at this stage",
+            });
+        }
+
+        order.orderStatus = "cancelled";
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Order cancelled successfully",
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updateOrderStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { orderStatus } = req.body;
+
+        const validStatuses = [
+            "placed",
+            "confirdmed",
+            "preparing",
+            "out_for_delivery",
+            "delivered",
+            "placed"
+        ];
+
+        if (!validStatuses.includes(orderStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid order status",
+            });
+        }
+
+        const order = await Order.findById(id);
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order does not exist",
+            });
+        }
+
+        order.orderStatus = orderStatus;
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Order status updated successfully",
+            order,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder, updateOrderStatus};
