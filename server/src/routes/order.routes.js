@@ -5,7 +5,7 @@ const authenticate = require('../middleware/auth.middleware');
 const authorize = require('../middleware/role.middleware');
 
 // order routes
-router.post('/', authenticate, createOrder);
+// router.post('/', authenticate, createOrder);
 
 router.get('/', authenticate, getMyOrders);
 

@@ -18,7 +18,7 @@ const registerUser = async (req, res, next) => {
             });
         };
 
-        const existingUser = await userModel.findOne({ email });
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(409).json({
@@ -44,10 +44,9 @@ const registerUser = async (req, res, next) => {
         };
 
         const user = await User.create({
-            _id,
             name,
             email,
-            role,
+            password,
         });
 
         sendTokenResponse(user, res, 201, "User created successfully");
@@ -61,7 +60,7 @@ const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
-        const user = await userModel.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -89,7 +88,7 @@ const getUserDetails = async (req, res) => {
     try {
         const { email } = req.body;
 
-        const user = await userModel.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user)
             return res.status(404).json({ error: 'User Not Found' });
 
@@ -107,7 +106,7 @@ const updateUserDetails = async (req, res) => {
         // Define allowed updates
         const allowedUpdates = ['name', 'contact', 'address'];
 
-        const user = await userModel.findOne({ email });
+        const user = await User.findOne({ email });
         if (!user)
             return res.status(404).json({ error: 'User Not Found' });
 
