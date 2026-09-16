@@ -77,6 +77,18 @@ const orderSchema = new mongoose.Schema(
             ],
             default: "placed",
         },
+
+        razorpayOrderId: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
+
+        razorpayPaymentId: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
     },
     {
         timestamps: true,

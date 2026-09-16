@@ -160,7 +160,7 @@ const updateOrderStatus = async (req, res, next) => {
 
         const validStatuses = [
             "placed",
-            "confirdmed",
+            "confirmed",
             "preparing",
             "out_for_delivery",
             "delivered",
