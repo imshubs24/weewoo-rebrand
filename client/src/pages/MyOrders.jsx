@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useModal } from '../hooks/ModalContext';
-import { useUser } from '../hooks/UserContext';
+import { useModal } from '../context/ModalContext';
+import { useUser } from '../context/UserContext';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const MyOrders = () => {

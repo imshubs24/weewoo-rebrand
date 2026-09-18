@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import success from '../assets/payment-assets/success.png'
 import cross from '../assets/payment-assets/cross.png'
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../hooks/CartContext';
+import { useCart } from '../context/CartContext';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const PaymentStatus = () => {

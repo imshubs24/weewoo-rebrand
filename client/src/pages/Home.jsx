@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import AboutUs from '../components/home components/AboutUs'
-import DownloadApp from '../components/home components/DownloadApp'
-import HeroSection from '../components/home components/HeroSection'
-import Trending from '../components/home components/Trending'
+import AboutUs from '../components/home/AboutUs'
+import DownloadApp from '../components/home/DownloadApp'
+import HeroSection from '../components/home/HeroSection'
+import Trending from '../components/home/Trending'
 
 const Home = () => {
 

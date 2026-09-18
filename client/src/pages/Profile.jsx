@@ -1,18 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import ProfileField from '../components/ProfileField';
-import ChangePasswordModal from '../components/ChangePasswordModal';
-import { useUser } from '../hooks/UserContext';
+import { useEffect, useState } from 'react';
+import ProfileField from '../components/profile/ProfileField';
+import ChangePasswordModal from '../components/profile/ChangePasswordModal';
+import { useUser } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+import api from "../services/api";
 
 const Profile = () => {
     const navigate = useNavigate();
+
+    const { user, isLoggedIn, loading } = useUser();
 
     const [userInfo, setUserInfo] = useState({});
     const [editInfo, setEditInfo] = useState({ ...userInfo });
     const [isEditing, setIsEditing] = useState(false);
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
-    const { isLoggedIn, getAuthtoken, getUserEmail, getUserName } = useUser();
+
+    useEffect(() => {
+        if (loading) return;
+
+        if (!isLoggedIn || !user) {
+            navigate('/');
+            return;
+        }
+        setUserInfo(user);
+        setEditInfo(user);
+    }, [user, isLoggedIn, loading, navigate]);
 
     const handleEditClick = () => {
         setEditInfo({ ...userInfo });
@@ -21,21 +34,27 @@ const Profile = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEditInfo({ ...editInfo, [name]: value });
-    };
 
-    const handleSaveClick = async () => {
-        const result = await updateUserDetails(editInfo)
-        if (result.success) {
-            setUserInfo(editInfo);
-            setIsEditing(false);
-        } else {
-            console.error('Updating user details failed: ', result.error);
+        if (['street', 'city', 'state', 'pincode'].includes(name)) {
+            setEditInfo((prev) => ({
+                ...prev,
+                address: {
+                    ...prev.address,
+                    [name]: value,
+                },
+            }));
+
+            return;
         }
+
+        setEditInfo((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     const handleCancelClick = () => {
-        setEditInfo(userInfo);
+        setEditInfo({ ...userInfo });
         setIsEditing(false);
     };
 
@@ -48,144 +67,264 @@ const Profile = () => {
     };
 
     const handleChangePasswordClick = () => {
-        console.log('Change password clicked');
         openChangePasswordModal();
     };
 
-    // function to update user details - name, contact and address
+    const handleSaveClick = async () => {
+        const result = await updateUserDetails(editInfo);
+
+        if (result.success) {
+            setUserInfo(result.user);
+            setEditInfo(result.user);
+            setIsEditing(false);
+        } else {
+            console.error('Updating user details failed:', result.error);
+        }
+    };
+
     const updateUserDetails = async (updatedInfo) => {
-        const token = getAuthtoken();
-
-        // Filter out only the fields that need updating
-        const allowedUpdates = ['name', 'contact', 'address'];
-        const updates = {};
-        allowedUpdates.forEach((key) => {
-            if (updatedInfo[key] !== undefined) {
-                updates[key] = updatedInfo[key];
-            }
-        });
-
         try {
-            const response = await fetch(`${API_BASE_URL}/api/users/updateUserDetails`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ email: userInfo.email, updates })
+            const response = await api.put(`/api/auth/${user.id}`, {
+                name: updatedInfo.name,
+                phone: updatedInfo.phone,
+                address: updatedInfo.address,
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Updating user details failed: ', errorData.error);
-                return;
+            return {
+                success: true,
+                user: response.data.user,
             };
 
-            const data = await response.json();
-            console.log(data);
-            return { success: true, user: data.user };
-
         } catch (error) {
-            console.error('Error while updating user details: ', error);
-            return { success: false, error: 'Internal Server Error' };
+            console.error("Updating user details failed:", error);
+
+            return {
+                success: false,
+                error: error.response?.data?.message || "Failed to update profile",
+            };
         }
     }
 
-    useEffect(() => {
-        const userEmail = getUserEmail();
-        const name = getUserName();
-
-        if (!userEmail) {
-            navigate('/'); // Redirect to '/' if userEmail is not found
-        } else {
-            setUserInfo((prevUserInfo) => ({ ...prevUserInfo, email: userEmail, name }));
-        }
-    }, [isLoggedIn]);
-
-
     return (
         <>
-            <div className='w-full bg-red-500 flex flex-col items-center p-10 max-sm:p-3'>
-                <div className='w-1/2 max-xl:w-2/3 max-md:w-full text-white text-4xl py-2 max-xl:text-center'>My Profile</div>
-                <div className='w-1/2 max-xl:w-2/3 max-md:w-full min-h-[36rem] h-auto max-sm:min-h-[32rem] flex flex-col justify-center items-center bg-white text-lg'>
-                    <div className='flex flex-col gap-y-16 py-4 max-sm:items-start max-sm:ml-5 max-sm:gap-y-8'>
-                        <ProfileField
-                            label='Name'
-                            name='name'
-                            value={userInfo.name || ''}
-                            editValue={editInfo.name}
-                            isEditing={isEditing}
-                            onChange={handleChange}
-                        />
-                        <ProfileField
-                            label='Email'
-                            name='email'
-                            value={userInfo.email || ''}
-                            isEditing={false}
-                        />
-                        <ProfileField
-                            label='Contact'
-                            name='contact'
-                            value={!userInfo.contact ? 'No contact details' : userInfo.contact}
-                            editValue={editInfo.contact}
-                            isEditing={isEditing}
-                            onChange={handleChange}
-                        />
-                        <div className='flex justify-center items-center relative max-sm:flex-col max-sm:items-start'>
-                            <label className='w-40 font-medium'>Password</label>
-                            <p className='w-72 text-slate-700 text-sm'>********</p>
-                            <p
-                                className='absolute top-1 left-80 text-xs hover:text-red-500 cursor-pointer max-sm:static'
-                                onClick={handleChangePasswordClick}
-                            >
-                                Change password
-                            </p>
-                        </div>
-                        <ProfileField
-                            label='Address'
-                            name='address'
-                            value={!userInfo.address ? 'No address found' : userInfo.address}
-                            editValue={editInfo.address}
-                            isEditing={isEditing}
-                            onChange={handleChange}
-                        />
+            <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
+                <div className="max-w-4xl mx-auto">
+
+                    {/* Header */}
+                    <div className="mb-8">
+                        <p className="text-sm font-medium text-red-500 mb-1">
+                            Account
+                        </p>
+
+                        <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900">
+                            My Profile
+                        </h1>
+
+                        <p className="text-slate-500 mt-2">
+                            Manage your personal information and account settings.
+                        </p>
                     </div>
-                    <div className='flex gap-4'>
-                        {isEditing ? (
-                            <>
+
+                    {/* Profile Card */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+
+                        {/* User Header */}
+                        <div className="p-6 sm:p-8 flex items-center gap-5 border-b border-slate-100">
+                            <div className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center text-white text-xl font-semibold">
+                                {userInfo.name?.charAt(0).toUpperCase()}
+                            </div>
+
+                            <div>
+                                <h2 className="text-xl font-semibold text-slate-900">
+                                    {userInfo.name}
+                                </h2>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    {userInfo.email}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Personal Information */}
+                        <div className="p-6 sm:p-8">
+
+                            <div className="mb-6">
+                                <h2 className="text-lg font-semibold text-slate-900">
+                                    Personal Information
+                                </h2>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Your basic account information.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <ProfileField
+                                    label="Name"
+                                    name="name"
+                                    value={userInfo.name || ''}
+                                    editValue={editInfo.name}
+                                    isEditing={isEditing}
+                                    onChange={handleChange}
+                                />
+
+                                <ProfileField
+                                    label="Email"
+                                    name="email"
+                                    value={userInfo.email || ''}
+                                    isEditing={false}
+                                />
+
+                                <ProfileField
+                                    label="Phone"
+                                    name="phone"
+                                    value={userInfo.phone || 'No phone number'}
+                                    editValue={editInfo.phone || ''}
+                                    isEditing={isEditing}
+                                    onChange={handleChange}
+                                />
+
+                            </div>
+                        </div>
+
+                        {/* Address */}
+                        <div className="border-t border-slate-100 p-6 sm:p-8">
+
+                            <div className="mb-6">
+                                <h2 className="text-lg font-semibold text-slate-900">
+                                    Delivery Address
+                                </h2>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Where should we deliver your orders?
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                <div className="md:col-span-2">
+                                    <ProfileField
+                                        label="Street"
+                                        name="street"
+                                        value={userInfo.address?.street || 'No street'}
+                                        editValue={editInfo.address?.street || ''}
+                                        isEditing={isEditing}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
+                                <ProfileField
+                                    label="City"
+                                    name="city"
+                                    value={userInfo.address?.city || 'No city'}
+                                    editValue={editInfo.address?.city || ''}
+                                    isEditing={isEditing}
+                                    onChange={handleChange}
+                                />
+
+                                <ProfileField
+                                    label="State"
+                                    name="state"
+                                    value={userInfo.address?.state || 'No state'}
+                                    editValue={editInfo.address?.state || ''}
+                                    isEditing={isEditing}
+                                    onChange={handleChange}
+                                />
+
+                                <ProfileField
+                                    label="Pincode"
+                                    name="pincode"
+                                    value={userInfo.address?.pincode || 'No pincode'}
+                                    editValue={editInfo.address?.pincode || ''}
+                                    isEditing={isEditing}
+                                    onChange={handleChange}
+                                />
+
+                            </div>
+                        </div>
+
+                        {/* Security */}
+                        <div className="border-t border-slate-100 p-6 sm:p-8">
+
+                            <div className="mb-6">
+                                <h2 className="text-lg font-semibold text-slate-900">
+                                    Security
+                                </h2>
+
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Manage your account password.
+                                </p>
+                            </div>
+
+                            <div className="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-100 p-4">
+
+                                <div>
+                                    <p className="font-medium text-slate-800">
+                                        Password
+                                    </p>
+
+                                    <p className="text-sm text-slate-500 mt-1">
+                                        ••••••••••••
+                                    </p>
+                                </div>
+
                                 <button
-                                    className='border border-red-500 px-3 py-1 hover:bg-red-500 hover:text-white duration-150'
-                                    onClick={handleSaveClick}
+                                    type="button"
+                                    className="text-sm font-medium text-red-500 hover:text-red-600 transition"
+                                    onClick={handleChangePasswordClick}
                                 >
-                                    Save
+                                    Change password
                                 </button>
+
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="border-t border-slate-100 p-6 sm:p-8 flex justify-end gap-3">
+
+                            {isEditing ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition"
+                                        onClick={handleCancelClick}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="px-5 py-2.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow-sm"
+                                        onClick={handleSaveClick}
+                                    >
+                                        Save Changes
+                                    </button>
+                                </>
+                            ) : (
                                 <button
-                                    className='border border-gray-500 px-3 py-1 hover:bg-gray-500 hover:text-white duration-150'
-                                    onClick={handleCancelClick}
+                                    type="button"
+                                    className="px-5 py-2.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow-sm"
+                                    onClick={handleEditClick}
                                 >
-                                    Cancel
+                                    Edit Profile
                                 </button>
-                            </>
-                        ) : (
-                            <button
-                                className='border border-red-500 px-3 py-1 hover:bg-red-500 hover:text-white duration-150'
-                                onClick={handleEditClick}
-                            >
-                                Edit
-                            </button>
-                        )}
+                            )}
+
+                        </div>
+
                     </div>
                 </div>
             </div>
 
             {/* Change Password Modal */}
             {isChangePasswordModalOpen && (
-                <ChangePasswordModal handleChangePasswordClick={handleChangePasswordClick} closeChangePasswordModal={closeChangePasswordModal} />
+                <ChangePasswordModal
+                    closeChangePasswordModal={closeChangePasswordModal}
+                />
             )}
         </>
     );
 };
-
-
 
 export default Profile;

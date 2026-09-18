@@ -1,11 +1,7 @@
 const User = require('../models/User');
 const validator = require('email-validator');
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const sendTokenResponse = require('../utils/sendTokenResponse');
-
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.JWT_SECRET_KEY);
-};
 
 const registerUser = async (req, res, next) => {
     try {
@@ -84,53 +80,200 @@ const loginUser = async (req, res, next) => {
     }
 }
 
-const getUserDetails = async (req, res) => {
+const getUserDetails = async (req, res, next) => {
     try {
-        const { email } = req.body;
+        const { id } = req.params;
 
-        const user = await User.findOne({ email });
+        const user = await User.findById(id);
+
         if (!user)
-            return res.status(404).json({ error: 'User Not Found' });
+            return res.status(404).json({
+                success: false,
+                message: "User does not exist"
+            });
 
-        res.status(200).json({ message: 'User Found', user: { name: user.name, email: user.email } })
+        res.status(200).json({
+            success: false,
+            user
+        })
 
     } catch (error) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
-const updateUserDetails = async (req, res) => {
+const updateUserDetails = async (req, res, next) => {
     try {
-        const { email, updates } = req.body;
+        const { id } = req.params;
+        const { name, phone, address } = req.body;
 
-        // Define allowed updates
-        const allowedUpdates = ['name', 'contact', 'address'];
+        // User can only update their own profile
+        if (req.user._id.toString() !== id) {
+            return res.status(403).json({
+                success: false,
+                message: "You can only update your own profile",
+            });
+        }
 
-        const user = await User.findOne({ email });
-        if (!user)
-            return res.status(404).json({ error: 'User Not Found' });
+        const user = await User.findById(id);
 
-        // Validate updates
-        const updateKeys = Object.keys(updates);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
 
-        const isValidOperation = updateKeys.every(update => allowedUpdates.includes(update));
-        if (!isValidOperation) return res.status(400).json({ error: 'Invalid updates' });
+        if (name !== undefined) {
+            user.name = name;
+        }
 
-        // Apply the updates
-        updateKeys.forEach(update => {
-            if (user[update] !== updates[update]) {
-                user[update] = updates[update];
-            }
-        });
+        if (phone !== undefined) {
+            user.phone = phone;
+        }
 
-        // Save the updated user
+        if (address !== undefined) {
+            user.address = address;
+        }
+
         await user.save();
 
-        return res.status(200).json({ message: 'User information updated successfully' });
+        return res.status(200).json({
+            success: true,
+            message: "User information updated successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                phone: user.phone,
+                address: user.address,
+            },
+        });
 
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' })
+        next(error);
+    }
+};
+
+const getCurrentUser = async (req, res) => {
+    return res.status(200).json(req.user);
+};
+
+const logout = (req, res) => {
+    res.clearCookie("token");
+
+    res.status(200).json({
+        success: true,
+        message: "Logout successful",
+    });
+};
+
+const changePassword = async (req, res, next) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Current password and new password are required",
+            });
+        }
+
+        if (currentPassword === newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "New password must be different from current password",
+            });
+        }
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+
+        if (!passwordRegex.test(newPassword)) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be 6 characters or more and contain at least one uppercase and one lowercase character.",
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const isMatch = await user.comparePassword(currentPassword);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Current password is incorrect",
+            });
+        }
+
+        user.password = newPassword;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Password changed successfully",
+        });
+
+    } catch (error) {
+        next(error);
     }
 }
 
-module.exports = { registerUser, loginUser, getUserDetails, updateUserDetails };
+const refreshAccessToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        if (!refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: "Refresh token required",
+            });
+        }
+
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+        const user = await User.findById(decoded.userId).select("-password");
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User no longer exists"
+            });
+        };
+
+        const accessToken = jwt.sign(
+            {
+                userId: user._id,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "15m",
+            }
+        );
+
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Access token refreshed"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { registerUser, loginUser, getUserDetails, updateUserDetails, getCurrentUser, logout, changePassword, refreshAccessToken };

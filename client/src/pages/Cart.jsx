@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react'
-import { useCart } from '../hooks/CartContext'
-import { loadStripe } from '@stripe/stripe-js';
-import { useModal } from '../hooks/ModalContext';
-import { useUser } from '../hooks/UserContext';
+import { useEffect } from 'react'
+import { useCart } from '../context/CartContext'
+import { useModal } from '../context/ModalContext';
+import { useUser } from '../context/UserContext';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Cart = () => {

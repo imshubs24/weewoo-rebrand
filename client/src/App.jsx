@@ -1,15 +1,15 @@
 import React, { Suspense } from 'react';
 import './App.css';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import UserLoginModal from './components/UserLoginModal';
-import { useModal } from './hooks/ModalContext';
+import UserLoginModal from './components/auth/UserLoginModal';
+import { useModal } from './context/ModalContext';
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
-import Spinner from './components/Spinner';
+import Spinner from './components/common/Spinner';
+import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
