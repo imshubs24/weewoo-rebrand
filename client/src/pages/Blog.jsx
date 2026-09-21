@@ -1,53 +1,58 @@
-import { useEffect } from 'react';
-import blogSample from '../assets/blog-sample.jpg'
+import { useEffect } from "react";
+import blogSample from "../assets/blog-sample.jpg";
 
 const Blog = () => {
-
     const blogs = [
-        { title: 'Quinoa: Ingredient of the Week', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 9, 2024', image: blogSample },
-        { title: 'Quinoa: Ingredient of the Week', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 11, 2024', image: blogSample },
-        { title: 'Quinoa: Ingredient of the Week', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 16, 2024', image: blogSample },
-        { title: 'Deliciously Dairy-Free: Vegan Dessert Recipes to Satisfy Your Sweet Tooth', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 24, 2024', image: blogSample },
-        { title: 'Mastering the Art of Homemade Pasta: Tips and Tricks', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 28, 2024', image: blogSample },
-        { title: 'Mastering the Art of Homemade Pasta: Tips and Tricks', desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.', date: 'March 30, 2024', image: blogSample },
-    ]
+        { title: "Quinoa: Ingredient of the Week", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 9, 2024", image: blogSample },
+        { title: "Quinoa: Ingredient of the Week", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 11, 2024", image: blogSample },
+        { title: "Quinoa: Ingredient of the Week", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 16, 2024", image: blogSample },
+        { title: "Deliciously Dairy-Free: Vegan Dessert Recipes to Satisfy Your Sweet Tooth", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 24, 2024", image: blogSample },
+        { title: "Mastering the Art of Homemade Pasta: Tips and Tricks", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 28, 2024", image: blogSample },
+        { title: "Mastering the Art of Homemade Pasta: Tips and Tricks", desc: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga vitae repudiandae saepe placeat nulla, consectetur blanditiis. Mollitia blanditiis expedita beatae.", date: "March 30, 2024", image: blogSample },
+    ];
 
-    // scroll windows to top whenver switched to new page
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [location]);
+    }, []);
 
     return (
-        <>
-            <div className='min-h-dvh h-auto w-full relative flex flex-col'>
-                <div className="w-full h-[50vh] bg-[url('./assets/blog-cover.jpg')] absolute bg-no-repeat bg-cover bg-center -z-10">
-                    <div className='absolute h-full w-full top-0 bg-black opacity-50'></div>
+        <main className="w-full bg-slate-50 min-h-screen">
+            <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.jpg')] bg-cover bg-center">
+                <div className="absolute inset-0 bg-black/55"></div>
+                <h1 className="relative z-10 text-5xl sm:text-6xl lg:text-7xl text-white font-Mogra">BLOG</h1>
+            </section>
+
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+                <div className="mb-10">
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-500">From the WeeWoo kitchen</p>
+                    <h2 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Food, recipes & inspiration.</h2>
+                    <p className="mt-3 max-w-2xl text-slate-600">Discover recipes, ingredients, cooking tips, and stories for your next meal.</p>
                 </div>
-                <div className="text-white text-7xl h-[50vh] flex justify-center items-center">
-                    <h1 className="font-Mogra">BLOG</h1>
-                </div>
-                <div className="w-[60%] h-auto grid gap-y-10 gap-x-5 grid-cols-3 self-center py-10">
-                    {
-                        blogs.map((blog, index) =>
-                            <div key={index} className="flex flex-col min-h-[35rem] items-center py-2 gap-y-4 cursor-pointer group shadow-xl border border-gray-200">
-                                <img src={blog.image} alt="blog.jpg" className='h-72 w-96 group-hover:scale-95 ease-linear duration-150' />
-                                <div className='flex flex-col items-center gap-y-2'>
-                                    <p className=' text-gray-500'>{blog.date}</p>
-                                    <h1 className='px-10 text-lg font-semibold'>
-                                        {blog.title.length > 45 ? blog.title.slice(0, 45) + ' ...' : blog.title}
-                                    </h1>
-                                    <p className='px-10 text-gray-500'>{blog.desc.length > 125 ? blog.desc.slice(0, 125) + '...' : blog.desc}</p>
-                                    <p className='px-10 my-2 self-start text-slate-700 font-medium cursor-pointer hover:text-red-500 duration-100 ease-linear'>Read More...</p>
-                                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    {blogs.map((blog, index) => (
+                        <article key={index} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                            <div className="overflow-hidden bg-slate-100">
+                                <img src={blog.image} alt={blog.title} className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
-                        )
-                    }
 
+                            <div className="p-6">
+                                <p className="text-sm text-red-500 font-medium">{blog.date}</p>
 
+                                <h3 className="mt-3 text-xl font-semibold leading-snug text-slate-900">{blog.title}</h3>
+
+                                <p className="mt-3 text-sm leading-relaxed text-slate-500">{blog.desc.length > 125 ? `${blog.desc.slice(0, 125)}...` : blog.desc}</p>
+
+                                <button type="button" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-red-500 transition-colors">
+                                    Read More <i className="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
+                        </article>
+                    ))}
                 </div>
-            </div>
-        </>
-    )
-}
+            </section>
+        </main>
+    );
+};
 
-export default Blog
+export default Blog;

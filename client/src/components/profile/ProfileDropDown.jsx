@@ -1,40 +1,56 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useModal } from '../../context/ModalContext'
-import { useUser } from '../../context/UserContext'
+import { Link, useNavigate } from "react-router-dom";
+import { useModal } from "../../context/ModalContext";
+import { useUser } from "../../context/UserContext";
 
 const ProfileDropDown = () => {
-
     const { isLoggedIn, logout } = useUser();
     const { openModal } = useModal();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         await logout();
-        navigate('/');
+        navigate("/");
     };
 
     return (
-        <>
-            <div className='flex flex-col items-center overflow-x-hidden bg-red-500 w-full'>
-                <ul className='text-black text-base flex flex-col items-center w-full text-center'>
-                    {
-                        isLoggedIn &&
-                        <>
-                            <li className='py-2 w-full my-2'><Link to="/profile" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Profile</Link></li>
-                            <li className='py-2 w-full my-2'><Link to="/myorders" className='p-2 font-medium hover:text-white duration-150 ease-linear'>My Orders</Link></li>
-                        </>
-                    }
-                    <li className='py-2 w-full my-2'>
-                        {
-                            !isLoggedIn
-                                ? <Link className='px-2 font-medium hover:text-white duration-150 ease-linear' onClick={openModal}>Login/Signup</Link>
-                                : <Link className='px-2 font-medium hover:text-white duration-150 ease-linear' onClick={handleLogout} >Logout</Link>
-                        }
-                    </li>
-                </ul>
-            </div>
-        </>
-    )
-}
+        <div className="w-full bg-white">
+            <ul className="flex flex-col py-2 text-sm">
+                {isLoggedIn && (
+                    <>
+                        <li>
+                            <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors">
+                                <i className="fa-regular fa-user w-4"></i>
+                                My Profile
+                            </Link>
+                        </li>
 
-export default ProfileDropDown
+                        <li>
+                            <Link to="/myorders" className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors">
+                                <i className="fa-solid fa-bag-shopping w-4"></i>
+                                My Orders
+                            </Link>
+                        </li>
+
+                        <li className="my-1 border-t border-slate-100"></li>
+                    </>
+                )}
+
+                <li>
+                    {!isLoggedIn ? (
+                        <button type="button" onClick={openModal} className="w-full flex items-center gap-3 px-4 py-3 text-left text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors">
+                            <i className="fa-solid fa-right-to-bracket w-4"></i>
+                            Login / Signup
+                        </button>
+                    ) : (
+                        <button type="button" onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-left text-slate-700 hover:bg-red-50 hover:text-red-500 transition-colors">
+                            <i className="fa-solid fa-right-from-bracket w-4"></i>
+                            Logout
+                        </button>
+                    )}
+                </li>
+            </ul>
+        </div>
+    );
+};
+
+export default ProfileDropDown;

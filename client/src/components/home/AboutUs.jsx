@@ -1,28 +1,37 @@
-import image from '../../assets/home-assets/about-us-delivery.png'
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import aboutImage from "../../assets/home-assets/about-us-delivery.png";
+
 
 const AboutUs = () => {
     return (
-        <>
-            <div className='flex items-center justify-start gap-x-36 max-xl:gap-x-12 w-[75%] max-xl:w-[90%] h-[40vh] border-black max-md:flex-col max-md:h-auto max-md:justify-between max-md:my-5'>
-                <div className='w-1/2 flex items-center justify-center max-md:w-9/12'>
-                    <img src={image} alt="about-is-image" className='w-[80%] drop-shadow-home-about-us max-xl:w-full' />
-                </div>
-                <div className='w-1/2 flex flex-col items-start gap-y-5 max-xl:w-9/12'>
-                    <p className='font-medium text-2xl font-Mogra text-red-500 max-sm:text-xl'>A Few Words About Our Delivery Service</p>
-                    <h1 className='text-7xl font-medium max-sm:text-4xl'>ABOUT US</h1>
-                    <p className='text-gray-700 font-light'>Indulge in swift, savory delights with <span>WeeWoo</span>. We're here to deliver culinary excellence, swiftly and affordably, straight to your door.</p>
-                    <p className='text-gray-700 text-lg flex gap-x-2 items-center justify-center'>Want to know more? About Us
-                        <span className='text-red-500 text-[1.2rem]'>
-                            <Link>
-                                <i className="fa-solid fa-arrow-right py-1 px-5 border border-red-500 rounded-full hover:text-white hover:bg-red-500 hover:border-red-500 cursor-pointer duration-100 ease-linear"></i>
-                            </Link>
-                        </span>
-                    </p>
+        <section className="w-full bg-white py-20 sm:py-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    <div className="overflow-hidden rounded-2xl">
+                        <img src={aboutImage} alt="About WeeWoo" className="w-full h-[320px] sm:h-[350px] object-contain" />
+                    </div>
+
+                    <div>
+                        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-500">About WeeWoo</p>
+
+                        <h2 className="mt-3 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">Good food, made simple.</h2>
+
+                        <p className="mt-6 text-base sm:text-lg leading-relaxed text-slate-600">
+                            At WeeWoo, we make it easy to discover your favorite food and get it delivered straight to your doorstep. From quick bites to satisfying meals, we bring a variety of delicious options together in one place.
+                        </p>
+
+                        <p className="mt-4 text-base sm:text-lg leading-relaxed text-slate-600">
+                            Browse the menu, add your favorites to the cart, and place your order with just a few clicks.
+                        </p>
+
+                        <Link to="/explore" className="inline-flex items-center mt-8 px-6 py-3 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors">
+                            Explore Our Menu <i className="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </>
-    )
-}
+        </section>
+    );
+};
 
-export default AboutUs
+export default AboutUs;

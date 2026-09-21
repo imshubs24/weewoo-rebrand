@@ -53,20 +53,84 @@ const createFood = async (req, res, next) => {
     };
 };
 
-// get all food items 
+// Get food items with optional search, category filtering, and pagination
 const getAllFoods = async (req, res, next) => {
     try {
-        const foodItems = await FoodMenu.find()
-            .populate("category");
+        const { page = 1, limit = 12, search = "", category = "" } = req.query;
 
-        return res.status(200).json({
-            success: true,
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
+
+        if (pageNumber < 1 || limitNumber < 1 || limitNumber > 50) {
+            return res.status(400).json({
+                message: "Invalid pagination parameters",
+            });
+        }
+
+        const filter = {};
+
+        // $regex allows partial matching and $options: "i" makes it case-insensitive.
+        if (search) {
+            filter.name = {
+                $regex: search,
+                $options: "i",
+            };
+        }
+
+        // FoodMenu stores the category's ObjectId, not the category name.
+        if (category) {
+            const categoryData = await FoodCategory.findOne({
+                category: category.toLowerCase(),
+            });
+
+            if (!categoryData) {
+                return res.status(200).json({
+                    foodItems: [],
+                    pagination: {
+                        page: pageNumber,
+                        limit: limitNumber,
+                        totalItems: 0,
+                        hasMore: false,
+                    },
+                });
+            }
+
+            // Add the category ObjectId to our MongoDB filter.
+            filter.category = categoryData._id;
+        }
+
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Run both database operations at the same time.
+        // 1. Get the food items for the current page.
+        // 2. Count how many total items match our filters.
+        const [foodItems, totalItems] = await Promise.all([
+            FoodMenu.find(filter)
+                .populate("category")
+                .skip(skip)
+                .limit(limitNumber),
+
+            FoodMenu.countDocuments(filter),
+        ]);
+
+        // Determine whether there are more food items available.
+        // The frontend can use this to decide whether to show
+        // the "Load More" button.
+        const hasMore = skip + foodItems.length < totalItems;
+
+        // Send the food items along with pagination information.
+        res.status(200).json({
             foodItems,
+            pagination: {
+                page: pageNumber,
+                limit: limitNumber,
+                totalItems,
+                hasMore,
+            },
         });
-
     } catch (error) {
         next(error);
-    };
+    }
 };
 
 const getFoodById = async (req, res, next) => {

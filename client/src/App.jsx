@@ -26,7 +26,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className='w-full min-h-full flex flex-col items-center relative'>
+      <div className="w-full min-h-screen flex flex-col relative">
         {isModalOpen && <UserLoginModal />}
         <Navbar />
         <Routes>

@@ -1,94 +1,131 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import sample from '../../assets/home-assets/sample.jpg'
-import sample2 from '../../assets/home-assets/sample2.jpg'
-import sample3 from '../../assets/home-assets/sample3.jpg'
-import sample4 from '../../assets/home-assets/sample4.jpg'
-import sample5 from '../../assets/home-assets/sample5.jpg'
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+
+import sample from "../../assets/home-assets/sample.jpg";
+import sample2 from "../../assets/home-assets/sample2.jpg";
+import sample3 from "../../assets/home-assets/sample3.jpg";
+import sample4 from "../../assets/home-assets/sample4.jpg";
+import sample5 from "../../assets/home-assets/sample5.jpg";
 
 const images = [sample, sample2, sample3, sample4, sample5];
 
 const HeroSection = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const intervalRef = useRef(null); // Use ref to store the interval ID
+    const intervalRef = useRef(null);
 
-    // Function to go to the next image
     const nextImage = () => {
         setCurrentImageIndex((prevIndex) =>
             prevIndex === images.length - 1 ? 0 : prevIndex + 1
         );
-        resetInterval(); // Reset the interval when next is clicked
     };
 
-    // Function to go to the previous image
     const prevImage = () => {
         setCurrentImageIndex((prevIndex) =>
             prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
-        resetInterval(); // Reset the interval when prev is clicked
     };
 
-    // Function to reset the interval
-    const resetInterval = () => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current); // Clear the existing interval
-        }
-        intervalRef.current = setInterval(() => {
-            nextImage(); // Automatically switch to the next image
-        }, 3000); // Set the interval to 3 seconds
-    };
-
-    // Set up the interval when the component mounts
     useEffect(() => {
-        resetInterval(); // Start the interval when the component mounts
-        return () => clearInterval(intervalRef.current); // Clean up interval on unmount
+        intervalRef.current = setInterval(() => {
+            setCurrentImageIndex((prevIndex) =>
+                prevIndex === images.length - 1 ? 0 : prevIndex + 1
+            );
+        }, 5000);
+
+        return () => {
+            clearInterval(intervalRef.current);
+        };
     }, []);
 
     return (
-        <>
-            <div className="h-[85vh] w-full relative text-slate-100">
-                <div className="h-full w-full absolute -z-10">
-                    <div className={`h-full w-full absolute bg-no-repeat bg-cover bg-center`}
-                        style={{ backgroundImage: `url(${images[currentImageIndex]})` }}>
-                        <div id="tint" className="absolute h-full w-full top-0 bg-black opacity-50"></div>
-                    </div>
-                </div>
-                <div className="text-white flex items-center justify-center h-full w-10/12 max-md:w-full">
-                    <div className="md:w-3/5 flex flex-col gap-y-8 items-start justify-center h-full">
-                        <p className="text-xl font-medium font-Mogra text-red-500 drop-shadow-hero-section-text">
-                            Welcome To Our Food Delivery Service
+        <section className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] max-h-[800px] overflow-hidden">
+
+            {/* Background Image */}
+            <div
+                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                style={{
+                    backgroundImage: `url(${images[currentImageIndex]})`,
+                }}
+            />
+
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/55" />
+
+            {/* Content */}
+            <div className="relative z-10 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="h-full flex items-center">
+                    <div className="max-w-2xl text-white">
+
+                        <p className="text-sm sm:text-base font-medium uppercase tracking-[0.2em] text-red-400 mb-4">
+                            Fresh food. Delivered fast.
                         </p>
-                        <h1 className="text-7xl font-semibold drop-shadow-hero-section-text">
-                            FOOD DELIVERY
+
+                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold leading-tight tracking-tight">
+                            Delicious food,
+                            <br />
+                            <span className="text-red-500">
+                                delivered to you.
+                            </span>
                         </h1>
-                        <Link
-                            to="/explore"
-                            className="select-none text-xl font-medium border border-red-500 py-3 px-4 rounded-full hover:ring-4 ring-red-500 ring-offset-2 hover:border-transparent hover:bg-red-500 hover:border-red-500 duration-100 ease-linear hover:drop-shadow-hero-navigate-button"
-                        >
-                            Order Now
-                        </Link>
+
+                        <p className="mt-6 max-w-xl text-base sm:text-lg text-slate-200 leading-relaxed">
+                            Order your favorite meals from WeeWoo and enjoy
+                            delicious food delivered straight to your doorstep.
+                        </p>
+
+                        <div className="mt-8 flex items-center gap-4">
+                            <Link
+                                to="/explore"
+                                className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors duration-200"
+                            >
+                                Explore Menu
+                            </Link>
+                        </div>
                     </div>
-                </div>
-                <div
-                    id="prev-btn"
-                    className="select-none absolute flex justify-center items-center top-1/2 left-0 hover:drop-shadow-hero-navigate-button max-md:hidden"
-                    onClick={prevImage}
-                >
-                    <p className="cursor-pointer text-xl border-2 border-red-500 bg-transparent py-2 px-3 rounded-r-3xl border-l-0 z-10 hover:bg-red-500">
-                        Prev
-                    </p>
-                </div>
-                <div
-                    id="next-btn"
-                    className="select-none absolute flex justify-center items-center top-1/2 right-0 hover:drop-shadow-hero-navigate-button max-md:hidden"
-                    onClick={nextImage}
-                >
-                    <p className="cursor-pointer text-xl border-2 border-red-500 bg-transparent py-2 px-3 rounded-l-3xl border-r-0 z-10 hover:bg-red-500">
-                        Next
-                    </p>
                 </div>
             </div>
-        </>
+
+            {/* Previous / Next */}
+            <button
+                type="button"
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-white/40 bg-black/20 text-white backdrop-blur-sm hover:bg-white hover:text-slate-900 transition hidden md:flex items-center justify-center"
+                aria-label="Previous image"
+            >
+                <i className="fa-solid fa-chevron-left text-sm"></i>
+            </button>
+
+            <button
+                type="button"
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-white/40 bg-black/20 text-white backdrop-blur-sm hover:bg-white hover:text-slate-900 transition hidden md:flex items-center justify-center"
+                aria-label="Next image"
+            >
+                <i className="fa-solid fa-chevron-right text-sm"></i>
+            </button>
+
+            {/* Carousel Indicators */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+                {images.map((_, index) => (
+                    <button
+                        key={index}
+                        type="button"
+                        onClick={() => setCurrentImageIndex(index)}
+                        aria-label={`Go to slide ${index + 1}`}
+                        className={`
+                            h-2
+                            rounded-full
+                            transition-all
+                            duration-300
+                            ${currentImageIndex === index
+                                ? "w-7 bg-red-500"
+                                : "w-2 bg-white/60 hover:bg-white"
+                            }
+                        `}
+                    />
+                ))}
+            </div>
+        </section>
     );
 };
 
