@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api = await axios.create({
+const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
     withCredentials: true,
 });
@@ -12,10 +12,15 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        const isAuthRequest =
+            originalRequest.url.includes("/auth/login") ||
+            originalRequest.url.includes("/auth/register") ||
+            originalRequest.url.includes("/auth/refresh");
+
         if (
             error.response?.status === 401 &&
             !originalRequest._retry &&
-            !originalRequest.url.includes("/auth/refresh")
+            !isAuthRequest
         ) {
             originalRequest._retry = true;
 
@@ -24,7 +29,7 @@ api.interceptors.response.use(
 
                 return api(originalRequest);
             } catch (refreshError) {
-                window.dispatchEvent(new Event("auth: logout"));
+                window.dispatchEvent(new Event("auth:logout"));
 
                 return Promise.reject(refreshError);
             }
