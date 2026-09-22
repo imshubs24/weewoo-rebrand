@@ -24,7 +24,6 @@ const Trending = () => {
     };
 
     const handleAddToCart = (item) => {
-        console.log(item);
         addToCart(item);
     }
 

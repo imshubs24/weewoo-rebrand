@@ -33,7 +33,6 @@ export const CartProvider = ({ children }) => {
             localStorage.setItem('cart', JSON.stringify(updatedCart));
             notify('Item added to the cart', 'success');
         } else {
-            console.log('Item already in cart');
             notify('Item already in the cart', 'error');
         }
     };

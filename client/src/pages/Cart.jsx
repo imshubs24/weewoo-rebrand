@@ -68,7 +68,7 @@ const Cart = () => {
                             deliveryAddress: user.address,
                         });
 
-                        console.log("Payment verified:", verifyResponse.data);
+                        // console.log("Payment verified:", verifyResponse.data);
 
                         clearCart();
 

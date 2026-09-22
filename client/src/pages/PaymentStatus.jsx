@@ -36,7 +36,6 @@ const PaymentStatus = () => {
 
                     if (response.ok) {
                         const result = await response.json();
-                        console.log(result);
 
                         if (result.status === 'success') {
                             clearCart();
