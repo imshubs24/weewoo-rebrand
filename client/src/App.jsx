@@ -21,7 +21,6 @@ const Blog = React.lazy(() => import('./pages/Blog'));
 const Cart = React.lazy(() => import('./pages/Cart'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const MyOrders = React.lazy(() => import('./pages/MyOrders'));
-const PaymentStatus = React.lazy(() => import('./pages/PaymentStatus'));
 
 const App = () => {
   const { isModalOpen } = useModal();
@@ -69,11 +68,6 @@ const App = () => {
           <Route path="/orders/:id" element={
             <Suspense fallback={<Spinner />}>
               <OrderDetails />
-            </Suspense>
-          } />
-          <Route path="/paymentstatus" element={
-            <Suspense fallback={<Spinner />}>
-              <PaymentStatus />
             </Suspense>
           } />
         </Routes>
