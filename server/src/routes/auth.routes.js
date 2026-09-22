@@ -8,13 +8,13 @@ router.post('/register', registerUser);
 
 router.post('/login', loginUser);
 
+router.put('/', authenticate, updateUserDetails);
+
 router.get('/me', authenticate, getCurrentUser);
 
 router.get('/:id', authenticate, authorize("admin"), getUserDetails);
 
 router.put('/change-password', authenticate, changePassword);
-
-router.put('/:id', authenticate, updateUserDetails);
 
 router.post('/logout', logout);
 

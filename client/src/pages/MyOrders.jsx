@@ -1,46 +1,37 @@
 import { useEffect, useState } from 'react'
 import { useModal } from '../context/ModalContext';
 import { useUser } from '../context/UserContext';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const MyOrders = () => {
 
     const { openModal } = useModal();
-    const { isLoggedIn } = useUser();
+    const { isLoggedIn, loading } = useUser();
     const [orders, setOrders] = useState([]);
+    const navigate = useNavigate();
 
     const fetchOrders = async () => {
         try {
-
             if (!isLoggedIn) {
                 openModal();
                 return;
             }
 
-            const authtoken = localStorage.getItem('authtoken');
-            const response = await fetch(`${API_BASE_URL}/api/order/getorder`, {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${authtoken}` }
-            });
+            const response = await api.get("/api/order/");
 
-            if (!response.ok) {
-                console.error(`Error: ${response.status} - ${response.statusText}`)
-                return;
-            }
-            const orders = await response.json();
-            console.log(orders.myOrders);
-            setOrders(orders.myOrders);
+            setOrders(response.data.orders);
         } catch (error) {
-            console.error('Error', error);
+            console.error("Failed to fetch orders:", error);
         }
-    }
+    };
 
     useEffect(() => {
+        if (loading) return;
+
         fetchOrders();
-    }, [])
+    }, [loading, isLoggedIn]);
 
-
-    // scroll windows to top whenver switched to new page
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location]);
@@ -67,7 +58,9 @@ const MyOrders = () => {
                                     <div className="flex items-center justify-between gap-3 px-5 py-4 bg-slate-50 border-b border-slate-200">
                                         <div>
                                             <p className="text-xs uppercase tracking-wider text-slate-400">Order Date</p>
-                                            <p className="mt-1 text-sm font-medium text-slate-800">{order.order_date[0]} @ {order.order_date[1]}</p>
+                                            <p className="mt-1 text-sm font-medium text-slate-800">
+                                                {new Date(order.createdAt).toLocaleDateString()} @ {new Date(order.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                            </p>
                                         </div>
 
                                         <span className="w-9 h-9 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
@@ -76,11 +69,11 @@ const MyOrders = () => {
                                     </div>
 
                                     <div className="p-5">
-                                        <div className="space-y-4 max-h-64 overflow-y-auto pr-1">
-                                            {order.order_items?.map((item) => (
-                                                <div key={item.name} className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100 last:border-b-0 last:pb-0">
+                                        <div className="space-y-4 h-48 overflow-y-auto pr-1">
+                                            {order.items?.map((item) => (
+                                                <div key={item._id} className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100 last:border-b-0 last:pb-0">
                                                     <div className="min-w-0">
-                                                        <p className="font-medium text-slate-800 truncate">{item.name}</p>
+                                                        <p className="font-medium text-slate-800 truncate">{item.food?.name}</p>
                                                         <p className="mt-1 text-xs text-slate-500">Qty: {item.quantity}</p>
                                                     </div>
 
@@ -89,9 +82,38 @@ const MyOrders = () => {
                                             ))}
                                         </div>
 
-                                        <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between">
-                                            <span className="font-medium text-slate-600">Total</span>
-                                            <span className="text-lg font-semibold text-red-500">₹{order.totalAmount.toFixed(2)}</span>
+                                        <div className="mt-5 pt-4 border-t border-slate-200 space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-slate-500">Payment</span>
+                                                <span className="text-sm font-medium text-green-600 capitalize">
+                                                    {order.paymentStatus}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-slate-500">Order Status</span>
+                                                <span className="text-sm font-medium text-slate-700 capitalize">
+                                                    {order.orderStatus?.replaceAll("_", " ")}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-2">
+                                                <span className="font-medium text-slate-600">Total</span>
+                                                <span className="text-lg font-semibold text-red-500">
+                                                    ₹{order.totalAmount.toFixed(2)}
+                                                </span>
+                                            </div>
+
+                                            <div className="mt-5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => navigate(`/orders/${order._id}`)}
+                                                    className="w-full py-2.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition"
+                                                >
+                                                    View Order
+                                                </button>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </article>

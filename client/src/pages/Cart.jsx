@@ -1,13 +1,15 @@
 import { useEffect } from 'react'
 import { useCart } from '../context/CartContext'
 import { useModal } from '../context/ModalContext';
-import { useUser } from '../context/UserContext';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { useToastify } from "../context/ToastifyContext";
+import { useUser } from "../context/UserContext";
+import api from "../services/api";
 
 const Cart = () => {
     const { openModal } = useModal();
-    const { isLoggedIn } = useUser();
-    const { cartItems, removeItem, increaseQuantity, decreaseQuantity } = useCart();
+    const { cartItems, removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCart();
+    const { notify } = useToastify();
+    const { user, isLoggedIn } = useUser();
 
     const calculateSubtotal = () => {
         let subtotal = 0;
@@ -25,35 +27,69 @@ const Cart = () => {
     };
 
     const makePayment = async () => {
+        if (!isLoggedIn) {
+            openModal();
+            return;
+        }
+
+        if (!user?.address?.street || !user?.address?.city || !user?.address?.state || !user?.address?.pincode) {
+            notify("Please add your delivery address first", "error");
+            return;
+        }
+
         try {
-            if (!isLoggedIn) {
-                openModal();
-                return;
-            }
+            const items = cartItems.map((item) => ({
+                food: item.id,
+                quantity: item.quantity,
+            }));
 
-            const authtoken = localStorage.getItem('authtoken');
-
-            const body = { cartItems };
-
-            const response = await fetch(`${API_BASE_URL}/api/payment/create-checkout-session`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authtoken}` },
-                body: JSON.stringify(body)
+            const response = await api.post("/api/payment/create-order", {
+                items,
+                deliveryAddress: user.address,
             });
 
-            if (!response.ok) {
-                console.log(response);
-                console.error(`Error: ${response.status} - ${response.statusText}`);
-                return;
-            }
+            const { order } = response.data;
 
-            const { url } = await response.json();
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: order.amount,
+                currency: order.currency,
+                name: "WeeWoo",
+                description: "Food Order",
+                order_id: order.razorpayOrderId,
 
-            // Update the new window's location to the Stripe checkout URL
-            window.location.href = url;
+                handler: async (paymentResponse) => {
+                    try {
+                        const verifyResponse = await api.post("/api/payment/verify", {
+                            razorpay_order_id: paymentResponse.razorpay_order_id,
+                            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                            razorpay_signature: paymentResponse.razorpay_signature,
+                            items,
+                            deliveryAddress: user.address,
+                        });
+
+                        console.log("Payment verified:", verifyResponse.data);
+
+                        clearCart();
+
+                        notify("Payment successful! Order placed.", "success");
+                    } catch (error) {
+                        console.error("Payment verification failed:", error);
+                        notify(
+                            error.response?.data?.message || "Payment verification failed",
+                            "error"
+                        );
+                    }
+                },
+            };
+
+            const razorpay = new window.Razorpay(options);
+
+            razorpay.open();
 
         } catch (error) {
-            console.error('Error: ', error);
+            console.error("Failed to create Razorpay order:", error);
+            notify(error.response?.data?.message || "Failed to create order", "error");
         }
     };
 

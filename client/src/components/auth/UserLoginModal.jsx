@@ -63,8 +63,6 @@ const UserLoginModal = () => {
                 password: formData.password,
             });
 
-            console.log(response.data);
-
             login(response.data.user);
 
             closeModal();
@@ -91,9 +89,8 @@ const UserLoginModal = () => {
                 password: formData.password,
             });
 
-            console.log(response.data)
-
             login(response.data.user);
+            
             closeModal();
             setFormData({});
 
@@ -118,130 +115,152 @@ const UserLoginModal = () => {
     };
 
     return (
-        <>
-            <div className='fixed h-dvh w-full z-50'>
-                <div
-                    className='absolute w-full h-full bg-black opacity-90'
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={closeModal}
+            ></div>
+
+            <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
+                <button
+                    type="button"
+                    className="absolute top-4 right-5 text-slate-400 hover:text-slate-700 text-2xl transition"
                     onClick={closeModal}
-                ></div>
+                >
+                    &times;
+                </button>
 
-                <div className='absolute bg-red-500 min-h-[30rem] h-auto w-[30rem] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-10 rounded-md shadow-lg shadow-red-800'>
-
-                    <span
-                        className='absolute top-4 right-6 font-semibold text-lg select-none cursor-pointer text-white hover:text-black hover:scale-125 duration-150 ease-linear'
-                        onClick={closeModal}
-                    >
-                        X
-                    </span>
-
-                    <h1 className='font-Mogra text-logo text-center select-none text-white'>
+                <div className="text-center mb-8">
+                    <h1 className="font-Mogra text-4xl text-red-500 select-none">
                         WEEWOO!
                     </h1>
 
-                    <h1 className='text-3xl text-center font-medium mb-4 text-white'>
-                        {loginWindow ? 'Login' : 'Register'}
-                    </h1>
+                    <h2 className="mt-3 text-2xl font-semibold text-slate-900">
+                        {loginWindow ? "Welcome Back" : "Create an Account"}
+                    </h2>
 
-                    <p className='text-base text-black font-bold mb-2 min-h-8 h-auto'>
-                        {error}
+                    <p className="mt-2 text-sm text-slate-500">
+                        {loginWindow
+                            ? "Login to continue ordering your favourite food."
+                            : "Create your WeeWoo account and get started."}
                     </p>
+                </div>
 
-                    <form
-                        className='flex flex-col items-center gap-y-8 text-white'
-                        onSubmit={handleSubmit}
-                    >
+                {error && (
+                    <div className="mb-5 rounded-lg bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
+                        {error}
+                    </div>
+                )}
 
-                        {!loginWindow && (
-                            <div className='w-full'>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    id="name"
-                                    value={formData.name || ''}
-                                    onChange={handleChange}
-                                    placeholder='Name'
-                                    className='outline-none border border-white p-2 w-full rounded-md bg-red-500 placeholder:text-slate-300'
-                                />
-                            </div>
-                        )}
+                <form
+                    className="flex flex-col gap-5"
+                    onSubmit={handleSubmit}
+                >
+                    {!loginWindow && (
+                        <div>
+                            <label
+                                htmlFor="name"
+                                className="block text-sm font-medium text-slate-700 mb-1.5"
+                            >
+                                Name
+                            </label>
 
-                        <div className='w-full'>
                             <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email || ''}
+                                type="text"
+                                name="name"
+                                id="name"
+                                value={formData.name || ""}
                                 onChange={handleChange}
-                                placeholder='Email'
-                                className='outline-none border border-white p-2 w-full rounded-md bg-red-500 placeholder:text-slate-300'
+                                placeholder="Enter your name"
+                                className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-800 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition"
                             />
                         </div>
+                    )}
 
-                        <div className='w-full'>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                value={formData.password || ''}
-                                onChange={handleChange}
-                                placeholder='Password'
-                                className='outline-none border border-white p-2 w-full rounded-md bg-red-500 placeholder:text-slate-300'
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            className='border-2 border-white hover:text-black hover:bg-white duration-100 ease-linear py-2 px-5 rounded-md font-medium flex items-center justify-center'
-                            disabled={loading}
+                    <div>
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-slate-700 mb-1.5"
                         >
-                            {loading ? (
-                                <div
-                                    className="spinner-border animate-spin w-5 h-5 border-4 border-white border-t-transparent rounded-full"
-                                    role="status"
-                                >
-                                    <span className="sr-only">
-                                        Loading...
-                                    </span>
-                                </div>
-                            ) : (
-                                loginWindow ? 'Login' : 'Register'
-                            )}
-                        </button>
+                            Email
+                        </label>
 
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            value={formData.email || ""}
+                            onChange={handleChange}
+                            placeholder="Enter your email"
+                            className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-800 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition"
+                        />
+                    </div>
+
+                    <div>
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-slate-700 mb-1.5"
+                        >
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            value={formData.password || ""}
+                            onChange={handleChange}
+                            placeholder="Enter your password"
+                            className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-800 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full mt-2 py-3 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                        {loading ? (
+                            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        ) : (
+                            loginWindow ? "Login" : "Create Account"
+                        )}
+                    </button>
+
+                    <div className="text-center text-sm text-slate-500 mt-1">
                         {loginWindow ? (
                             <p>
-                                New to WeeWoo? Create an{' '}
+                                New to WeeWoo?{" "}
                                 <span
-                                    className='cursor-pointer hover:font-medium underline underline-offset-2 duration-175 ease-linear'
+                                    className="text-red-500 font-medium cursor-pointer hover:text-red-600 transition"
                                     onClick={() => {
                                         setLoginWindow(false);
-                                        setError('');
+                                        setError("");
                                         setFormData({});
                                     }}
                                 >
-                                    account
+                                    Create an account
                                 </span>
                             </p>
                         ) : (
                             <p>
-                                Already have an account? Login{' '}
+                                Already have an account?{" "}
                                 <span
-                                    className='cursor-pointer hover:font-medium underline underline-offset-2 duration-75 ease-linear'
+                                    className="text-red-500 font-medium cursor-pointer hover:text-red-600 transition"
                                     onClick={() => {
                                         setLoginWindow(true);
-                                        setError('');
+                                        setError("");
                                         setFormData({});
                                     }}
                                 >
-                                    here
+                                    Login here
                                 </span>
                             </p>
                         )}
-
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
-        </>
+        </div>
     );
 }
 

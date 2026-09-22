@@ -104,18 +104,9 @@ const getUserDetails = async (req, res, next) => {
 
 const updateUserDetails = async (req, res, next) => {
     try {
-        const { id } = req.params;
         const { name, phone, address } = req.body;
 
-        // User can only update their own profile
-        if (req.user._id.toString() !== id) {
-            return res.status(403).json({
-                success: false,
-                message: "You can only update your own profile",
-            });
-        }
-
-        const user = await User.findById(id);
+        const user = await User.findById(req.user._id);
 
         if (!user) {
             return res.status(404).json({
@@ -161,7 +152,8 @@ const getCurrentUser = async (req, res) => {
 };
 
 const logout = (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
 
     res.status(200).json({
         success: true,

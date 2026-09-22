@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import sample from "../assets/trending-food/burger.png";
 import sample2 from "../assets/trending-food/pizza.png";
 import { useCart } from "../context/CartContext";
-import { ToastContainer } from "react-toastify";
 import Spinner from "../components/common/Spinner.jsx";
 import api from "../services/api";
 
@@ -71,7 +70,6 @@ const Explore = () => {
         }
     };
 
-    // Initial page load.
     useEffect(() => {
         loadCategories();
         loadFoodItems(1, false);
@@ -107,8 +105,6 @@ const Explore = () => {
 
     return (
         <>
-            <ToastContainer position="bottom-center" autoClose={3000} theme="colored" />
-
             <main className="w-full bg-slate-50 min-h-screen">
                 <section className="bg-white border-b border-slate-200">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

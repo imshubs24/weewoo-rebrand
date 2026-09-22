@@ -10,6 +10,8 @@ import {
 import Spinner from './components/common/Spinner';
 import Navbar from './components/common/Navbar';
 import Footer from './components/common/Footer';
+import { ToastContainer } from "react-toastify";
+import OrderDetails from './pages/OrderDetails';
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -59,9 +61,14 @@ const App = () => {
               <Profile />
             </Suspense>
           } />
-          <Route path="/myorders" element={
+          <Route path="/orders" element={
             <Suspense fallback={<Spinner />}>
               <MyOrders />
+            </Suspense>
+          } />
+          <Route path="/orders/:id" element={
+            <Suspense fallback={<Spinner />}>
+              <OrderDetails />
             </Suspense>
           } />
           <Route path="/paymentstatus" element={
@@ -71,6 +78,7 @@ const App = () => {
           } />
         </Routes>
         <Footer />
+        <ToastContainer position="bottom-center" autoClose={3000} theme="colored" />
       </div>
     </BrowserRouter>
   );

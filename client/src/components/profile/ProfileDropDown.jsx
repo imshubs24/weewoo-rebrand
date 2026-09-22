@@ -25,7 +25,7 @@ const ProfileDropDown = () => {
                         </li>
 
                         <li>
-                            <Link to="/myorders" className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors">
+                            <Link to="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 hover:text-red-500 transition-colors">
                                 <i className="fa-solid fa-bag-shopping w-4"></i>
                                 My Orders
                             </Link>

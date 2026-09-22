@@ -15,6 +15,7 @@ const Profile = () => {
     const [editInfo, setEditInfo] = useState({ ...userInfo });
     const [isEditing, setIsEditing] = useState(false);
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         if (loading) return;
@@ -71,6 +72,8 @@ const Profile = () => {
     };
 
     const handleSaveClick = async () => {
+        setIsSaving(true);
+
         const result = await updateUserDetails(editInfo);
 
         if (result.success) {
@@ -80,11 +83,13 @@ const Profile = () => {
         } else {
             console.error('Updating user details failed:', result.error);
         }
+
+        setIsSaving(false);
     };
 
     const updateUserDetails = async (updatedInfo) => {
         try {
-            const response = await api.put(`/api/auth/${user.id}`, {
+            const response = await api.put(`/api/auth/`, {
                 name: updatedInfo.name,
                 phone: updatedInfo.phone,
                 address: updatedInfo.address,
@@ -287,7 +292,8 @@ const Profile = () => {
                                 <>
                                     <button
                                         type="button"
-                                        className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition"
+                                        disabled={isSaving}
+                                        className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-medium hover:bg-slate-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
                                         onClick={handleCancelClick}
                                     >
                                         Cancel
@@ -295,10 +301,18 @@ const Profile = () => {
 
                                     <button
                                         type="button"
-                                        className="px-5 py-2.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow-sm"
+                                        disabled={isSaving}
+                                        className="px-5 py-2.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                                         onClick={handleSaveClick}
                                     >
-                                        Save Changes
+                                        {isSaving ? (
+                                            <span className="flex items-center gap-2">
+                                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                                Saving...
+                                            </span>
+                                        ) : (
+                                            "Save Changes"
+                                        )}
                                     </button>
                                 </>
                             ) : (

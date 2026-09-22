@@ -45,7 +45,7 @@ const createCategory = async (req, res, next) => {
 // get all categories
 const getAllCategories = async (req, res, next) => {
     try {
-        const categories = await FoodCategory.find();
+        const categories = await FoodCategory.find().sort({ category: 1 });
 
         return res.status(200).json({
             success: true,

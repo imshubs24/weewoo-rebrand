@@ -78,6 +78,7 @@ const getMyOrders = async (req, res, next) => {
         const orders = await Order.find({
             user: req.user._id,
         })
+            .sort({ createdAt: -1 })
             .populate("items.food");
 
         return res.status(200).json({
@@ -146,6 +147,7 @@ const cancelOrder = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "Order cancelled successfully",
+            order,
         });
 
     } catch (error) {
@@ -164,7 +166,6 @@ const updateOrderStatus = async (req, res, next) => {
             "preparing",
             "out_for_delivery",
             "delivered",
-            "placed"
         ];
 
         if (!validStatuses.includes(orderStatus)) {
@@ -197,4 +198,4 @@ const updateOrderStatus = async (req, res, next) => {
     }
 }
 
-module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder, updateOrderStatus};
+module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder, updateOrderStatus };
