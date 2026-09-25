@@ -116,7 +116,7 @@ const getOrderById = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
 const cancelOrder = async (req, res, next) => {
     try {
@@ -153,7 +153,7 @@ const cancelOrder = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
 const updateOrderStatus = async (req, res, next) => {
     try {
@@ -196,6 +196,23 @@ const updateOrderStatus = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
-module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder, updateOrderStatus };
+const getAllOrders = async (req, res, next) => {
+    try {
+        const orders = await Order.find()
+            .populate("user", "name email phone")
+            .populate("items.food")
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            orders,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder, updateOrderStatus, getAllOrders };

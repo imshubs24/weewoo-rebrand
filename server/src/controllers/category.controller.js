@@ -11,12 +11,12 @@ const createCategory = async (req, res, next) => {
                 success: false,
                 message: "Category is required",
             });
-        };
+        }
 
         const categoryName = category.trim();
 
         const categoryExists = await FoodCategory.findOne({
-            category: categoryName
+            category: { $regex: `^${categoryName}$`, $options: "i" }
         });
 
         if (categoryExists) {
@@ -24,10 +24,10 @@ const createCategory = async (req, res, next) => {
                 success: false,
                 message: "Category already exists",
             });
-        };
+        }
 
         const newCategory = await FoodCategory.create({
-            category,
+            category: categoryName,
             image,
         });
 
@@ -39,7 +39,7 @@ const createCategory = async (req, res, next) => {
 
     } catch (error) {
         next(error);
-    };
+    }
 };
 
 // get all categories
@@ -86,6 +86,15 @@ const updateCategory = async (req, res, next) => {
         const { id } = req.params;
         const { category, image } = req.body;
 
+        if (!category) {
+            return res.status(400).json({
+                success: false,
+                message: "Category is required",
+            });
+        }
+
+        const categoryName = category.trim();
+
         const categoryExists = await FoodCategory.findById(id);
 
         if (!categoryExists) {
@@ -95,7 +104,9 @@ const updateCategory = async (req, res, next) => {
             });
         }
 
-        const duplicateCategory = await FoodCategory.findOne({ category });
+        const duplicateCategory = await FoodCategory.findOne({
+            category: { $regex: `^${categoryName}$`, $options: "i" }
+        });
 
         if (duplicateCategory && duplicateCategory._id.toString() !== id) {
             return res.status(409).json({
@@ -104,7 +115,7 @@ const updateCategory = async (req, res, next) => {
             });
         }
 
-        categoryExists.category = category;
+        categoryExists.category = categoryName;
         categoryExists.image = image;
 
         await categoryExists.save();

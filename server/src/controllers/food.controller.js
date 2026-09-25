@@ -43,7 +43,7 @@ const createFood = async (req, res, next) => {
         });
 
         return res.status(201).json({
-            success: false,
+            success: true,
             message: "Food item created successfully",
             newFood
         });
@@ -160,7 +160,7 @@ const getFoodById = async (req, res, next) => {
 const updateFood = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, category, price, image, description } = req.body;
+        const { name, category, price, image, description, isAvailable } = req.body;
 
         const foodItem = await FoodMenu.findById(id);
 
@@ -188,6 +188,7 @@ const updateFood = async (req, res, next) => {
         if (price !== undefined) foodItem.price = price;
         if (image !== undefined) foodItem.image = image;
         if (description !== undefined) foodItem.description = description;
+        if (isAvailable !== undefined) foodItem.isAvailable = isAvailable;
 
         await foodItem.save();
 

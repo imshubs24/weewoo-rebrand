@@ -20,6 +20,8 @@ app.get("/api/test", (req, res) => {
 // routes
 app.use("/api/auth", require("./routes/auth.routes"));
 
+app.use("/api/admin", require("./routes/admin.routes"));
+
 app.use("/api/category", require("./routes/category.routes"));
 
 app.use("/api/food", require("./routes/food.routes"));

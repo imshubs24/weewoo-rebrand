@@ -8,10 +8,15 @@ import {
   Route,
 } from "react-router-dom";
 import Spinner from './components/common/Spinner';
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
+import CustomerLayout from "./components/common/CustomerLayout";
 import { ToastContainer } from "react-toastify";
 import OrderDetails from './pages/OrderDetails';
+import AdminRoute from "./components/admin/AdminRoute";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminFood from "./pages/admin/AdminFood";
+import AdminCategories from "./pages/admin/AdminCategories";
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -29,49 +34,115 @@ const App = () => {
     <BrowserRouter>
       <div className="w-full min-h-screen flex flex-col relative">
         {isModalOpen && <UserLoginModal />}
-        <Navbar />
         <Routes>
           <Route path="/" element={
-            <Suspense fallback={<Spinner />}>
-              <Home />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Home />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/explore" element={
-            <Suspense fallback={<Spinner />}>
-              <Explore />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Explore />
+              </Suspense>
+            </CustomerLayout>
           } />
-          <Route path="/blog" element={<Suspense fallback={<Spinner />}>
-            <Blog />
-          </Suspense>
+
+          <Route path="/blog" element={
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Blog />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/help" element={
-            <Suspense fallback={<Spinner />}>
-              <Help />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Help />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/cart" element={
-            <Suspense fallback={<Spinner />}>
-              <Cart />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Cart />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/profile" element={
-            <Suspense fallback={<Spinner />}>
-              <Profile />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <Profile />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/orders" element={
-            <Suspense fallback={<Spinner />}>
-              <MyOrders />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <MyOrders />
+              </Suspense>
+            </CustomerLayout>
           } />
+
           <Route path="/orders/:id" element={
-            <Suspense fallback={<Spinner />}>
-              <OrderDetails />
-            </Suspense>
+            <CustomerLayout>
+              <Suspense fallback={<Spinner />}>
+                <OrderDetails />
+              </Suspense>
+            </CustomerLayout>
           } />
+
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminDashboard />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminOrders />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/food"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminFood />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AdminCategories />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
         </Routes>
-        <Footer />
         <ToastContainer position="bottom-center" autoClose={3000} theme="colored" />
       </div>
     </BrowserRouter>

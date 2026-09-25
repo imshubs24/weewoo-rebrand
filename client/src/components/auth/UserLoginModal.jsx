@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useModal } from '../../context/ModalContext'
 import { useUser } from '../../context/UserContext';
+import { useNavigate } from "react-router-dom";
 
 import api from "../../services/api"
 
@@ -14,6 +15,8 @@ const UserLoginModal = () => {
     const [loading, setLoading] = useState(false);
 
     const timeoutRef = useRef(null);
+
+    const navigate = useNavigate();
 
     const resetError = () => {
         if (timeoutRef.current) {
@@ -64,8 +67,12 @@ const UserLoginModal = () => {
             });
 
             login(response.data.user);
-
             closeModal();
+
+            if (response.data.user.role === "admin") {
+                navigate("/admin");
+            }
+
             setFormData({});
         } catch (error) {
             console.error('Error while login: ', error);
@@ -90,7 +97,6 @@ const UserLoginModal = () => {
             });
 
             login(response.data.user);
-            
             closeModal();
             setFormData({});
 
