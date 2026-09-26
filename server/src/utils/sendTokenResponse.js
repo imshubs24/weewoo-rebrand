@@ -27,14 +27,14 @@ const sendTokenResponse = (user, res, statusCode, message) => {
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -46,6 +46,8 @@ const sendTokenResponse = (user, res, statusCode, message) => {
             name: user.name,
             email: user.email,
             role: user.role,
+            phone: user.phone,
+            address: user.address,
         },
     });
 };

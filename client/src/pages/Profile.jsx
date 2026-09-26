@@ -3,12 +3,11 @@ import ProfileField from '../components/profile/ProfileField';
 import ChangePasswordModal from '../components/profile/ChangePasswordModal';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
+import { useToastify } from '../context/ToastifyContext';
 
 import api from "../services/api";
 
 const Profile = () => {
-    const navigate = useNavigate();
-
     const { user, isLoggedIn, loading } = useUser();
 
     const [userInfo, setUserInfo] = useState({});
@@ -16,6 +15,9 @@ const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+
+    const navigate = useNavigate();
+    const { notify } = useToastify();
 
     useEffect(() => {
         if (loading) return;
@@ -72,6 +74,15 @@ const Profile = () => {
     };
 
     const handleSaveClick = async () => {
+        if (editInfo.phone) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+
+            if (!phoneRegex.test(editInfo.phone)) {
+                notify("Please enter a valid 10-digit Indian phone number", "error");
+                return;
+            }
+        }
+
         setIsSaving(true);
 
         const result = await updateUserDetails(editInfo);
@@ -80,7 +91,9 @@ const Profile = () => {
             setUserInfo(result.user);
             setEditInfo(result.user);
             setIsEditing(false);
+            notify("Profile updated successfully", "success");
         } else {
+            notify(result.error, "error");
             console.error('Updating user details failed:', result.error);
         }
 

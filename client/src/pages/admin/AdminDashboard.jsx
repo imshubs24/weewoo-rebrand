@@ -41,22 +41,22 @@ const AdminDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                 <div className="bg-white rounded-xl border border-slate-200 p-5">
                     <p className="text-sm text-slate-500">Total Orders</p>
-                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats.totalOrders}</p>
+                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats?.totalOrders ?? 0}</p>
                 </div>
 
                 <div className="bg-white rounded-xl border border-slate-200 p-5">
                     <p className="text-sm text-slate-500">Total Revenue</p>
-                    <p className="mt-2 text-3xl font-semibold text-slate-900">₹{stats.totalRevenue.toFixed(2)}</p>
+                    <p className="mt-2 text-3xl font-semibold text-slate-900">₹{stats?.totalRevenue.toFixed(2) ?? 0}</p>
                 </div>
 
                 <div className="bg-white rounded-xl border border-slate-200 p-5">
                     <p className="text-sm text-slate-500">Total Users</p>
-                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats.totalUsers}</p>
+                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats?.totalUsers ?? 0}</p>
                 </div>
 
                 <div className="bg-white rounded-xl border border-slate-200 p-5">
                     <p className="text-sm text-slate-500">Total Food Items</p>
-                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats.totalFoodItems}</p>
+                    <p className="mt-2 text-3xl font-semibold text-slate-900">{stats?.totalFoodItems ?? 0}</p>
                 </div>
             </div>
             <div className="mt-8 bg-white border border-slate-200 rounded-xl overflow-hidden">

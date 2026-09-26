@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import { useToastify } from "../../context/ToastifyContext";
 
 const AdminFood = () => {
   const [foodItems, setFoodItems] = useState([]);
@@ -16,6 +17,8 @@ const AdminFood = () => {
     image: "",
     description: "",
   });
+
+  const { notify } = useToastify();
 
   const fetchFoodItems = async () => {
     try {
@@ -65,6 +68,8 @@ const AdminFood = () => {
               : food
           )
         );
+
+        notify("Food updated successfully", "success");
       } else {
         const response = await api.post("/api/food/", {
           ...formData,
@@ -72,6 +77,8 @@ const AdminFood = () => {
         });
 
         setFoodItems((prev) => [response.data.newFood, ...prev]);
+
+        notify("Food added successfully", "success");
       }
 
       setFormData({
@@ -87,6 +94,8 @@ const AdminFood = () => {
 
     } catch (error) {
       console.error("Failed to save food:", error);
+
+      notify(error.response?.data?.message || "Failed to save food", "error");
     } finally {
       setIsAdding(false);
     }
@@ -118,8 +127,12 @@ const AdminFood = () => {
       setFoodItems((prev) =>
         prev.filter((food) => food._id !== foodId)
       );
+
+      notify("Food deleted successfully", "success");
     } catch (error) {
       console.error("Failed to delete food:", error);
+
+      notify(error.response?.data?.message || "Failed to delete food", "error");
     }
   };
 
@@ -136,8 +149,15 @@ const AdminFood = () => {
             : item
         )
       );
+
+      notify(
+        `Food marked as ${response.data.food.isAvailable ? "available" : "unavailable"}`,
+        "success"
+      );
     } catch (error) {
       console.error("Failed to update food availability:", error);
+
+      notify("Failed to update food availability", "error");
     }
   };
 

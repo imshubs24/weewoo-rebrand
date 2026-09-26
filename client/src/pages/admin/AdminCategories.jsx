@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import { useToastify } from "../../context/ToastifyContext";
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
@@ -12,6 +13,8 @@ const AdminCategories = () => {
     category: "",
     image: "",
   });
+
+  const { notify } = useToastify();
 
   const fetchCategories = async () => {
     try {
@@ -52,10 +55,14 @@ const AdminCategories = () => {
               : category
           )
         );
+
+        notify("Category updated successfully", "success");
       } else {
         const response = await api.post("/api/category/", formData);
 
         setCategories((prev) => [...prev, response.data.category]);
+
+        notify("Category added successfully", "success");
       }
 
       setFormData({
@@ -67,6 +74,8 @@ const AdminCategories = () => {
       setIsAddFormOpen(false);
     } catch (error) {
       console.error("Failed to save category:", error);
+
+      notify(error.response?.data?.message || "Failed to save category", "error");
     } finally {
       setIsAdding(false);
     }
@@ -96,8 +105,12 @@ const AdminCategories = () => {
       setCategories((prev) =>
         prev.filter((category) => category._id !== categoryId)
       );
+
+      notify("Category deleted successfully", "success");
     } catch (error) {
       console.error("Failed to delete category:", error);
+
+      notify(error.response?.data?.message || "Failed to delete category", "error");
     }
   };
 

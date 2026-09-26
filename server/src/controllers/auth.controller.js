@@ -120,6 +120,15 @@ const updateUserDetails = async (req, res, next) => {
         }
 
         if (phone !== undefined) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+
+            if (!phoneRegex.test(phone)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please enter a valid 10-digit Indian phone number",
+                });
+            }
+
             user.phone = phone;
         }
 
@@ -254,7 +263,7 @@ const refreshAccessToken = async (req, res, next) => {
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 15 * 60 * 1000
         });
 

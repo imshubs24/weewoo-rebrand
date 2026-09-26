@@ -58,17 +58,21 @@ const Cart = () => {
                 description: "Food Order",
                 order_id: order.razorpayOrderId,
 
+                modal: {
+                    ondismiss: () => {
+                        notify("Payment cancelled", "error");
+                    },
+                },
+
                 handler: async (paymentResponse) => {
                     try {
-                        const verifyResponse = await api.post("/api/payment/verify", {
+                        await api.post("/api/payment/verify", {
                             razorpay_order_id: paymentResponse.razorpay_order_id,
                             razorpay_payment_id: paymentResponse.razorpay_payment_id,
                             razorpay_signature: paymentResponse.razorpay_signature,
                             items,
                             deliveryAddress: user.address,
                         });
-
-                        // console.log("Payment verified:", verifyResponse.data);
 
                         clearCart();
 
@@ -89,6 +93,7 @@ const Cart = () => {
 
         } catch (error) {
             console.error("Failed to create Razorpay order:", error);
+
             notify(error.response?.data?.message || "Failed to create order", "error");
         }
     };

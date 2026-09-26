@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import { useToastify } from "../../context/ToastifyContext";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const { notify } = useToastify();
 
   const fetchOrders = async () => {
     try {
@@ -30,8 +33,12 @@ const AdminOrders = () => {
             : order
         )
       );
+
+      notify(`Order status updated successfully`, "success");
     } catch (error) {
       console.error("Failed to update order status:", error);
+      
+      notify(error.response?.data?.message || "Failed to update order status", "error");
     }
   };
 
