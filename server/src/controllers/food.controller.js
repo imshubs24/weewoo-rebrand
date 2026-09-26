@@ -80,7 +80,7 @@ const getAllFoods = async (req, res, next) => {
         // FoodMenu stores the category's ObjectId, not the category name.
         if (category) {
             const categoryData = await FoodCategory.findOne({
-                category: category.toLowerCase(),
+                category: { $regex: `^${category.trim()}$`, $options: "i" },
             });
 
             if (!categoryData) {

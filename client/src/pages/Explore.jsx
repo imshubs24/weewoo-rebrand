@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import sample from "../assets/trending-food/burger.png";
-import sample2 from "../assets/trending-food/pizza.png";
 import { useCart } from "../context/CartContext";
 import Spinner from "../components/common/Spinner.jsx";
 import api from "../services/api";
@@ -156,7 +154,14 @@ const Explore = () => {
                                     return (
                                         <article key={item._id} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                                             <div className="relative h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
-                                                <img src={item.category?.category === "burger" ? sample : sample2} alt={item.name} className="h-44 w-44 object-contain group-hover:scale-105 transition-transform duration-300 select-none" />
+
+                                                {item.image ? (
+                                                    <img src={item.image} alt={item.name} className="h-44 w-44 object-contain group-hover:scale-105 transition-transform duration-300 select-none" />
+                                                ) : (
+                                                    <div className="h-44 w-44 bg-slate-100 flex items-center justify-center text-slate-400 select-none">
+                                                        No Image
+                                                    </div>
+                                                )}
 
                                                 <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-medium ${item.isAvailable ? "bg-green-100 text-green-700" : "bg-slate-200 text-slate-500"}`}>
                                                     {item.isAvailable ? "Available" : "Unavailable"}

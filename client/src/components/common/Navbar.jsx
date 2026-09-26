@@ -108,7 +108,7 @@ const Navbar = () => {
 
                                 {isLoggedIn && user?.name && (
                                     <span className="hidden lg:block text-sm font-medium text-slate-700">
-                                        Hi, {user.name}
+                                        Hi, {user?.name?.split(" ")[0]}
                                     </span>
                                 )}
                             </button>
