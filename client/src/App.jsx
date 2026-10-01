@@ -14,7 +14,6 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminFood from "./pages/admin/AdminFood";
 import AdminCategories from "./pages/admin/AdminCategories";
 import { useUser } from "./context/UserContext";
-import ServerError from "./components/common/ServerError";
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -26,12 +25,7 @@ const Profile = React.lazy(() => import('./pages/Profile'));
 const MyOrders = React.lazy(() => import('./pages/MyOrders'));
 
 const App = () => {
-  const { serverError, getCurrentUser } = useUser();
   const { isModalOpen } = useModal();
-
-  if (serverError) {
-    return <ServerError onRetry={getCurrentUser} />;
-  }
 
   return (
     <BrowserRouter>

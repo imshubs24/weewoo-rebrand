@@ -8,7 +8,7 @@ import { useToastify } from '../context/ToastifyContext';
 import api from "../services/api";
 
 const Profile = () => {
-    const { user, isLoggedIn, loading } = useUser();
+    const { user, isLoggedIn, loading, updateUser } = useUser();
 
     const [userInfo, setUserInfo] = useState({});
     const [editInfo, setEditInfo] = useState({ ...userInfo });
@@ -88,6 +88,7 @@ const Profile = () => {
         const result = await updateUserDetails(editInfo);
 
         if (result.success) {
+            updateUser(result.user);
             setUserInfo(result.user);
             setEditInfo(result.user);
             setIsEditing(false);

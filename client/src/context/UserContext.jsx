@@ -11,11 +11,14 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [serverError, setServerError] = useState(false);
 
     const login = (userData) => {
         setUser(userData);
         setIsLoggedIn(true);
+    };
+
+    const updateUser = (userData) => {
+        setUser(userData);
     };
 
     const logout = async () => {
@@ -31,7 +34,6 @@ export const UserProvider = ({ children }) => {
 
     const getCurrentUser = async () => {
         setLoading(true);
-        setServerError(false);
 
         try {
             const response = await api.get('/api/auth/me');
@@ -39,12 +41,8 @@ export const UserProvider = ({ children }) => {
             setUser(response.data);
             setIsLoggedIn(true);
         } catch (error) {
-            if (!error.response) {
-                setServerError(true);
-            } else {
-                setUser(null);
-                setIsLoggedIn(false);
-            }
+            setUser(null);
+            setIsLoggedIn(false);
         } finally {
             setLoading(false);
         }
@@ -74,9 +72,8 @@ export const UserProvider = ({ children }) => {
                 isLoggedIn,
                 loading,
                 login,
+                updateUser,
                 logout,
-                serverError,
-                getCurrentUser,
             }}
         >
             {children}
