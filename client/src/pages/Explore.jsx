@@ -159,7 +159,7 @@ const Explore = () => {
                                             <div className="relative h-52 bg-slate-100 flex items-center justify-center overflow-hidden">
 
                                                 {item.image ? (
-                                                    <img src={item.image} alt={item.name} className="h-44 w-44 object-contain group-hover:scale-105 transition-transform duration-300 select-none" />
+                                                    <img src={item.image} loading="lazy" alt={item.name} className="h-44 w-44 object-contain group-hover:scale-105 transition-transform duration-300 select-none" />
                                                 ) : (
                                                     <div className="h-44 w-44 bg-slate-100 flex items-center justify-center text-slate-400 select-none">
                                                         No Image

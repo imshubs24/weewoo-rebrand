@@ -1,4 +1,4 @@
-import playStore from "../../assets/home-assets/playstore.png";
+import playStore from "../../assets/home-assets/playstore.webp";
 import appStore from "../../assets/home-assets/appstore.svg";
 
 const DownloadApp = () => {
@@ -17,11 +17,11 @@ const DownloadApp = () => {
 
                         <div className="mt-8 flex flex-wrap justify-center lg:justify-start items-center gap-4">
                             <a href="#" className="transition-transform hover:scale-105">
-                                <img src={playStore} alt="Get it on Google Play" className="h-12 w-auto" />
+                                <img src={playStore} loading="lazy" alt="Get it on Google Play" className="h-12 w-auto" />
                             </a>
 
                             <a href="#" className="transition-transform hover:scale-105">
-                                <img src={appStore} alt="Download on the App Store" className="h-12 w-auto" />
+                                <img src={appStore} loading="lazy" alt="Download on the App Store" className="h-12 w-auto" />
                             </a>
                         </div>
                     </div>

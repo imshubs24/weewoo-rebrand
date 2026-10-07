@@ -329,7 +329,7 @@ const AdminFood = () => {
           {foodItems.map((food) => (
             <div key={food._id} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               {food.image ? (
-                <img src={food.image} alt={food.name} className="w-full h-48 object-cover" />
+                <img src={food.image} loading="lazy" alt={food.name} className="w-full h-48 object-cover" />
               ) : (
                 <div className="w-full h-48 bg-slate-100 flex items-center justify-center text-slate-400">
                   No Image

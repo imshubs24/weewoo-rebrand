@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import blogSample from "../assets/blog-sample.jpg";
+import blogSample from "../assets/blog-sample.webp";
 
 const Blog = () => {
     const blogs = [
@@ -17,7 +17,7 @@ const Blog = () => {
 
     return (
         <main className="w-full bg-slate-50 min-h-screen">
-            <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.jpg')] bg-cover bg-center">
+            <section className="relative w-full h-[40vh] min-h-[300px] flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.webp')] bg-cover bg-center">
                 <div className="absolute inset-0 bg-black/55"></div>
                 <h1 className="relative z-10 text-5xl sm:text-6xl lg:text-7xl text-white font-Mogra">BLOG</h1>
             </section>
@@ -33,7 +33,7 @@ const Blog = () => {
                     {blogs.map((blog, index) => (
                         <article key={index} className="group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                             <div className="overflow-hidden bg-slate-100">
-                                <img src={blog.image} alt={blog.title} className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img src={blog.image} loading="lazy" alt={blog.title} className="w-full h-60 object-cover group-hover:scale-105 transition-transform duration-300" />
                             </div>
 
                             <div className="p-6">

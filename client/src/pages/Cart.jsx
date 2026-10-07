@@ -1,15 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from "react";
 import { useCart } from '../context/CartContext'
 import { useModal } from '../context/ModalContext';
 import { useToastify } from "../context/ToastifyContext";
 import { useUser } from "../context/UserContext";
 import api from "../services/api";
+import AddressRequiredPopup from "../components/common/AddressRequiredPopup.jsx";
 
 const Cart = () => {
     const { openModal } = useModal();
     const { cartItems, removeItem, increaseQuantity, decreaseQuantity, clearCart } = useCart();
     const { notify } = useToastify();
     const { user, isLoggedIn } = useUser();
+    const [showAddressPopup, setShowAddressPopup] = useState(false);
 
     const calculateSubtotal = () => {
         let subtotal = 0;
@@ -32,8 +34,13 @@ const Cart = () => {
             return;
         }
 
-        if (!user?.address?.street || !user?.address?.city || !user?.address?.state || !user?.address?.pincode) {
-            notify("Please add your delivery address first", "error");
+        if (
+            !user?.address?.street ||
+            !user?.address?.city ||
+            !user?.address?.state ||
+            !user?.address?.pincode
+        ) {
+            setShowAddressPopup(true);
             return;
         }
 
@@ -106,7 +113,7 @@ const Cart = () => {
     return (
         <>
             <main className="w-full min-h-screen bg-slate-50">
-                <section className="relative w-full h-64 flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.jpg')] bg-cover bg-center">
+                <section className="relative w-full h-64 flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.webp')] bg-cover bg-center">
                     <div className="absolute inset-0 bg-black/65"></div>
                     <h1 className="relative z-10 text-5xl sm:text-6xl text-white font-Mogra">Cart</h1>
                 </section>
@@ -205,6 +212,12 @@ const Cart = () => {
                     </section>
                 )}
             </main>
+
+            {showAddressPopup && (
+                <AddressRequiredPopup
+                    onClose={() => setShowAddressPopup(false)}
+                />
+            )}
         </>
     );
 }

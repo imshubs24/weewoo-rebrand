@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ProfileDropDown from "../profile/ProfileDropDown";
 import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
-import hamburgerIcon from "../../assets/menu.png";
+import hamburgerIcon from "../../assets/menu.webp";
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);

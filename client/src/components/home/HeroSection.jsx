@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import sample from "../../assets/home-assets/sample.jpg";
-import sample2 from "../../assets/home-assets/sample2.jpg";
-import sample3 from "../../assets/home-assets/sample3.jpg";
-import sample4 from "../../assets/home-assets/sample4.jpg";
-import sample5 from "../../assets/home-assets/sample5.jpg";
+import sample from "../../assets/home-assets/sample.webp";
+import sample2 from "../../assets/home-assets/sample2.webp";
+import sample3 from "../../assets/home-assets/sample3.webp";
+import sample4 from "../../assets/home-assets/sample4.webp";
+import sample5 from "../../assets/home-assets/sample5.webp";
 
 const images = [sample, sample2, sample3, sample4, sample5];
 
@@ -35,6 +35,13 @@ const HeroSection = () => {
         return () => {
             clearInterval(intervalRef.current);
         };
+    }, []);
+
+    useEffect(() => {
+        images.forEach((image) => {
+            const img = new Image();
+            img.src = image;
+        });
     }, []);
 
     return (
@@ -112,16 +119,7 @@ const HeroSection = () => {
                         type="button"
                         onClick={() => setCurrentImageIndex(index)}
                         aria-label={`Go to slide ${index + 1}`}
-                        className={`
-                            h-2
-                            rounded-full
-                            transition-all
-                            duration-300
-                            ${currentImageIndex === index
-                                ? "w-7 bg-red-500"
-                                : "w-2 bg-white/60 hover:bg-white"
-                            }
-                        `}
+                        className={`h-2 rounded-full transition-all duration-300 ${currentImageIndex === index ? "w-7 bg-red-500" : "w-2 bg-white/60 hover:bg-white"}`}
                     />
                 ))}
             </div>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import aboutImage from "../../assets/home-assets/about-us-delivery.png";
+import aboutImage from "../../assets/home-assets/about-us-delivery.webp";
 
 
 const AboutUs = () => {
@@ -8,7 +8,7 @@ const AboutUs = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     <div className="overflow-hidden rounded-2xl">
-                        <img src={aboutImage} alt="About WeeWoo" className="w-full h-[320px] sm:h-[350px] object-contain" />
+                        <img src={aboutImage} loading="lazy" alt="About WeeWoo" className="w-full h-[320px] sm:h-[350px] object-contain" />
                     </div>
 
                     <div>

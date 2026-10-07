@@ -126,16 +126,16 @@ const Profile = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6">
+            <div className="min-h-screen bg-slate-50 py-6 px-4 sm:px-6">
                 <div className="max-w-4xl mx-auto">
 
                     {/* Header */}
-                    <div className="mb-8">
+                    <div className="mb-5">
                         <p className="text-sm font-medium text-red-500 mb-1">
                             Account
                         </p>
 
-                        <h1 className="text-3xl sm:text-4xl font-semibold text-slate-900">
+                        <h1 className="text-3xl font-semibold text-slate-900">
                             My Profile
                         </h1>
 
@@ -165,7 +165,7 @@ const Profile = () => {
                         </div>
 
                         {/* Personal Information */}
-                        <div className="p-6 sm:p-8">
+                        <div className="p-5 sm:p-6">
 
                             <div className="mb-6">
                                 <h2 className="text-lg font-semibold text-slate-900">
@@ -177,7 +177,7 @@ const Profile = () => {
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                                 <ProfileField
                                     label="Name"
@@ -208,7 +208,7 @@ const Profile = () => {
                         </div>
 
                         {/* Address */}
-                        <div className="border-t border-slate-100 p-6 sm:p-8">
+                        <div className="border-t border-slate-100 p-5 sm:p-6">
 
                             <div className="mb-6">
                                 <h2 className="text-lg font-semibold text-slate-900">
@@ -220,7 +220,7 @@ const Profile = () => {
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                                 <div className="md:col-span-2">
                                     <ProfileField
@@ -264,7 +264,7 @@ const Profile = () => {
                         </div>
 
                         {/* Security */}
-                        <div className="border-t border-slate-100 p-6 sm:p-8">
+                        <div className="border-t border-slate-100 p-5 sm:p-6">
 
                             <div className="mb-6">
                                 <h2 className="text-lg font-semibold text-slate-900">

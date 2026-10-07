@@ -79,7 +79,7 @@ const OrderDetails = () => {
 
     return (
         <main className="w-full min-h-screen bg-slate-50">
-            <section className="relative w-full h-64 flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.jpg')] bg-cover bg-center">
+            <section className="relative w-full h-64 flex items-center justify-center overflow-hidden bg-[url('./assets/blog-cover.webp')] bg-cover bg-center">
                 <div className="absolute inset-0 bg-black/65"></div>
                 <h1 className="relative z-10 text-5xl sm:text-6xl text-white font-Mogra">Order Details</h1>
             </section>
