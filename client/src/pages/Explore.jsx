@@ -8,7 +8,7 @@ const Explore = () => {
 
     const [foodItems, setFoodItems] = useState([]);
     const [search, setSearch] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [categories, setCategories] = useState([]);
 
     const [page, setPage] = useState(1);
@@ -19,8 +19,7 @@ const Explore = () => {
 
     // Fetch food items from the backend.
     // append = false means we are loading a fresh set of results.
-    // append = true means we are loading the next page and adding
-    // the new items to the existing items.
+    // append = true means we are loading the next page and adding the new items to the existing items.
     const loadFoodItems = async (pageNumber = 1, append = false) => {
         try {
             setLoading(true);
@@ -36,8 +35,8 @@ const Explore = () => {
             }
 
             // Only add category when one has been selected.
-            if (selectedCategory) {
-                params.append("category", selectedCategory);
+            if (selectedCategories.length > 0) {
+                params.append("category", selectedCategories.join(","));
             }
 
             const response = await api.get(`/api/food?${params.toString()}`);
@@ -80,14 +79,18 @@ const Explore = () => {
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [search, selectedCategory]);
+    }, [search, selectedCategories]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     const handleCategoryChange = (category) => {
-        setSelectedCategory((prev) => (prev === category ? "" : category));
+        setSelectedCategories((prev) =>
+            prev.includes(category)
+                ? prev.filter((item) => item !== category)
+                : [...prev, category]
+        );
     };
 
     // Load the next page and append it to the existing food items.
@@ -118,12 +121,12 @@ const Explore = () => {
                         </div>
 
                         <div className="mt-6 flex flex-wrap gap-2">
-                            <button type="button" onClick={() => setSelectedCategory("")} className={`px-4 py-2 rounded-full text-sm font-medium transition ${selectedCategory === "" ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                            <button type="button" onClick={() => setSelectedCategories("")} className={`px-4 py-2 rounded-full text-sm font-medium transition ${selectedCategories === "" ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                                 All
                             </button>
 
                             {categories.map((category) => (
-                                <button key={category._id} type="button" onClick={() => handleCategoryChange(category.category)} className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition ${selectedCategory === category.category ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                                <button key={category._id} type="button" onClick={() => handleCategoryChange(category.category)} className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition ${selectedCategories.includes(category.category) ? "bg-red-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                                     {category.category}
                                 </button>
                             ))}

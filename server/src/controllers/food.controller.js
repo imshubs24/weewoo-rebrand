@@ -63,6 +63,7 @@ const getAllFoods = async (req, res, next) => {
 
         if (pageNumber < 1 || limitNumber < 1 || limitNumber > 50) {
             return res.status(400).json({
+                success: false,
                 message: "Invalid pagination parameters",
             });
         }
@@ -79,12 +80,24 @@ const getAllFoods = async (req, res, next) => {
 
         // FoodMenu stores the category's ObjectId, not the category name.
         if (category) {
-            const categoryData = await FoodCategory.findOne({
-                category: { $regex: `^${category.trim()}$`, $options: "i" },
+            const categoryNames = category
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean);
+
+            const categoryData = await FoodCategory.find({
+                category: {
+                    $in: categoryNames.map(
+                        (name) => new RegExp(`^${name}$`, "i")
+                    ),
+                },
             });
 
-            if (!categoryData) {
+            const categoryIds = categoryData.map((item) => item._id);
+
+            if (categoryIds.length === 0) {
                 return res.status(200).json({
+                    success: true,
                     foodItems: [],
                     pagination: {
                         page: pageNumber,
@@ -95,8 +108,9 @@ const getAllFoods = async (req, res, next) => {
                 });
             }
 
-            // Add the category ObjectId to our MongoDB filter.
-            filter.category = categoryData._id;
+            filter.category = {
+                $in: categoryIds,
+            };
         }
 
         const skip = (pageNumber - 1) * limitNumber;
@@ -120,6 +134,7 @@ const getAllFoods = async (req, res, next) => {
 
         // Send the food items along with pagination information.
         res.status(200).json({
+            success: true,
             foodItems,
             pagination: {
                 page: pageNumber,

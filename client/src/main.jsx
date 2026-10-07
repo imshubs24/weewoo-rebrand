@@ -6,17 +6,20 @@ import { ModalProvider } from './context/ModalContext.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 import { UserProvider } from './context/UserContext.jsx'
 import { ToastifyProvider } from './context/ToastifyContext.jsx'
+import ErrorBoundary from './components/common/ErrorBoundary.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <UserProvider>
-      <ModalProvider>
-        <ToastifyProvider>
-          <CartProvider>
-            <App />
-          </CartProvider>
-        </ToastifyProvider>
-      </ModalProvider>
-    </UserProvider>
+    <ErrorBoundary>
+      <UserProvider>
+        <ModalProvider>
+          <ToastifyProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </ToastifyProvider>
+        </ModalProvider>
+      </UserProvider>
+    </ErrorBoundary>
   </React.StrictMode>,
 )
