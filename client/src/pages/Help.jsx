@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 const Help = () => {
     const legalQuestions = {
@@ -74,7 +75,11 @@ const Help = () => {
                                     <div key={index} className="border-b border-slate-200 last:border-b-0">
                                         <button type="button" onClick={() => toggleDescription(index)} className="w-full flex items-center justify-between gap-4 py-5 text-left">
                                             <span className={`text-sm sm:text-base font-medium transition-colors ${isOpen ? "text-red-500" : "text-slate-700 hover:text-red-500"}`}>{q.title}</span>
-                                            <i className={`fa-solid fa-chevron-${isOpen ? "up" : "down"} text-xs text-slate-400 shrink-0`}></i>
+                                            {isOpen ? (
+                                                <ChevronUp size={12} className="text-slate-400 shrink-0" />
+                                            ) : (
+                                                <ChevronDown size={12} className="text-slate-400 shrink-0" />
+                                            )}
                                         </button>
 
                                         {isOpen && (

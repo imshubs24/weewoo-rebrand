@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import Spinner from "../components/common/Spinner.jsx";
 import api from "../services/api";
+import { Search, Utensils, Check } from "lucide-react";
 
 const Explore = () => {
     const { cartItems, addToCart } = useCart();
@@ -116,7 +117,10 @@ const Explore = () => {
                         </div>
 
                         <div className="mt-8 relative max-w-2xl">
-                            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <Search
+                                size={18}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
                             <input type="search" placeholder="Search food..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition" />
                         </div>
 
@@ -139,7 +143,7 @@ const Explore = () => {
                         <Spinner />
                     ) : foodItems.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-24 text-center">
-                            <i className="fa-solid fa-utensils text-4xl text-slate-300"></i>
+                            <Utensils size={36} className="text-slate-300" />
                             <h2 className="mt-4 text-xl font-semibold text-slate-800">No food items found</h2>
                             <p className="mt-2 text-slate-500">Try changing your search or category filter.</p>
                         </div>
@@ -183,7 +187,7 @@ const Explore = () => {
 
                                                     {isInCart ? (
                                                         <button type="button" disabled className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center">
-                                                            <i className="fa-solid fa-check"></i>
+                                                            <Check size={18} />
                                                         </button>
                                                     ) : (
                                                         <button type="button" onClick={() => handleAddToCart(item)} disabled={!item.isAvailable} className="px-4 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors">

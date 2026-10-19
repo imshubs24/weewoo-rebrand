@@ -16,7 +16,7 @@ const uploadToCloudinary = (file) => {
             }
         );
 
-        Readable.from(file.buffer).pipe(uploadStream);
+        Readable.from([file.buffer]).pipe(uploadStream);
     });
 };
 

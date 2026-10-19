@@ -317,9 +317,7 @@ const AdminFood = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Food Image
-              </label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Food Image</label>
 
               <input
                 type="file"

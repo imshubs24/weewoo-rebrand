@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 import { useToastify } from "../../context/ToastifyContext";
+import { X } from "lucide-react";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -37,7 +38,7 @@ const AdminOrders = () => {
       notify(`Order status updated successfully`, "success");
     } catch (error) {
       console.error("Failed to update order status:", error);
-      
+
       notify(error.response?.data?.message || "Failed to update order status", "error");
     }
   };
@@ -115,6 +116,7 @@ const AdminOrders = () => {
           </div>
         )}
       </div>
+
       {selectedOrder && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
@@ -129,7 +131,7 @@ const AdminOrders = () => {
                 onClick={() => setSelectedOrder(null)}
                 className="text-slate-400 hover:text-slate-700 text-xl"
               >
-                <i className="fa-solid fa-xmark"></i>
+                <X size={18} />
               </button>
             </div>
 
@@ -203,6 +205,7 @@ const AdminOrders = () => {
           </div>
         </div>
       )}
+
     </>
   );
 };

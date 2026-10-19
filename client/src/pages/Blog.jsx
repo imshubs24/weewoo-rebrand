@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import blogSample from "../assets/blog-sample.webp";
+import { ArrowRight } from "lucide-react";
 
 const Blog = () => {
     const blogs = [
@@ -44,7 +45,7 @@ const Blog = () => {
                                 <p className="mt-3 text-sm leading-relaxed text-slate-500">{blog.desc.length > 125 ? `${blog.desc.slice(0, 125)}...` : blog.desc}</p>
 
                                 <button type="button" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-red-500 transition-colors">
-                                    Read More <i className="fa-solid fa-arrow-right text-xs"></i>
+                                    Read More <ArrowRight size={12} />
                                 </button>
                             </div>
                         </article>

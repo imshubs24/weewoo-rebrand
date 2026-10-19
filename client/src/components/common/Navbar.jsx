@@ -4,6 +4,7 @@ import ProfileDropDown from "../profile/ProfileDropDown";
 import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 import hamburgerIcon from "../../assets/menu.webp";
+import { ShoppingCart, UserRound } from "lucide-react";
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -90,9 +91,9 @@ const Navbar = () => {
                             to="/cart"
                             className="relative p-2 text-slate-700 hover:text-red-600 transition-colors"
                         >
-                            <i className="fa-solid fa-cart-shopping text-lg"></i>
+                            <ShoppingCart size={18} />
 
-                            <span className="absolute -top-2 -right min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-semibold">
+                            <span className="absolute -top-2 min-w-4 h-4 px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-semibold">
                                 {getTotalCartItems()}
                             </span>
                         </Link>
@@ -104,7 +105,7 @@ const Navbar = () => {
                                 onClick={handleProfileDropDown}
                                 className="flex items-center gap-2 p-2 text-slate-700 hover:text-red-600 transition-colors"
                             >
-                                <i className="fa-regular fa-user text-lg"></i>
+                                <UserRound size={18} />
 
                                 {isLoggedIn && user?.name && (
                                     <span className="hidden lg:block text-sm font-medium text-slate-700">

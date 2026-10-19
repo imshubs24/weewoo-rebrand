@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import aboutImage from "../../assets/home-assets/about-us-delivery.webp";
-
+import { ArrowRight } from "lucide-react";
 
 const AboutUs = () => {
     return (
@@ -8,7 +8,7 @@ const AboutUs = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     <div className="overflow-hidden rounded-2xl">
-                        <img src={aboutImage} loading="lazy" alt="About WeeWoo" className="w-full h-[320px] sm:h-[350px] object-contain" />
+                        <img src={aboutImage} loading="eager" decoding="async" alt="About WeeWoo" className="w-full h-[320px] sm:h-[350px] object-contain" />
                     </div>
 
                     <div>
@@ -25,7 +25,7 @@ const AboutUs = () => {
                         </p>
 
                         <Link to="/explore" className="inline-flex items-center mt-8 px-6 py-3 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors">
-                            Explore Our Menu <i className="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                            Explore Our Menu <ArrowRight size={14} className="ml-2" />
                         </Link>
                     </div>
                 </div>

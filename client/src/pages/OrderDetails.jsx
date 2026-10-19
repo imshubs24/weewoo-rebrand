@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
+import { Receipt, CircleCheck, CookingPot, Bike, House, X } from "lucide-react";
 
 const OrderDetails = () => {
     const { id } = useParams();
@@ -52,11 +53,11 @@ const OrderDetails = () => {
     }
 
     const orderStatuses = [
-        { value: "placed", label: "Placed", icon: "fa-receipt" },
-        { value: "confirmed", label: "Confirmed", icon: "fa-circle-check" },
-        { value: "preparing", label: "Preparing", icon: "fa-kitchen-set" },
-        { value: "out_for_delivery", label: "Out for Delivery", icon: "fa-motorcycle" },
-        { value: "delivered", label: "Delivered", icon: "fa-house" },
+        { value: "placed", label: "Placed", Icon: Receipt },
+        { value: "confirmed", label: "Confirmed", Icon: CircleCheck },
+        { value: "preparing", label: "Preparing", Icon: CookingPot },
+        { value: "out_for_delivery", label: "Out for Delivery", Icon: Bike },
+        { value: "delivered", label: "Delivered", Icon: House },
     ];
 
     const currentStatusIndex = orderStatuses.findIndex(
@@ -107,7 +108,7 @@ const OrderDetails = () => {
                             </div>
 
                             <span className="shrink-0 w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
-                                <i className="fa-solid fa-receipt"></i>
+                                <Receipt size={18} />
                             </span>
                         </div>
                     </div>
@@ -118,7 +119,7 @@ const OrderDetails = () => {
                         {order.orderStatus === "cancelled" ? (
                             <div className="mt-5 flex items-center gap-3 rounded-xl bg-red-50 border border-red-100 p-4">
                                 <span className="w-10 h-10 rounded-full bg-red-100 text-red-500 flex items-center justify-center shrink-0">
-                                    <i className="fa-solid fa-xmark"></i>
+                                    <X size={18} />
                                 </span>
 
                                 <div>
@@ -137,7 +138,7 @@ const OrderDetails = () => {
                                             <div key={status.value} className="flex-1 flex items-start">
                                                 <div className="flex flex-col items-center">
                                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isCompleted ? "bg-red-500 text-white" : "bg-slate-100 text-slate-400"}`}>
-                                                        <i className={`fa-solid ${status.icon} text-sm`}></i>
+                                                        <status.Icon size={14} />
                                                     </div>
 
                                                     <p className={`mt-2 text-xs sm:text-sm text-center ${isCompleted ? "text-slate-800 font-medium" : "text-slate-400"}`}>

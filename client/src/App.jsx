@@ -6,14 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Spinner from './components/common/Spinner';
 import CustomerLayout from "./components/common/CustomerLayout";
 import { ToastContainer } from "react-toastify";
-import OrderDetails from './pages/OrderDetails';
+
 import AdminRoute from "./components/admin/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminFood from "./pages/admin/AdminFood";
-import AdminCategories from "./pages/admin/AdminCategories";
-import { useUser } from "./context/UserContext";
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -23,6 +18,11 @@ const Blog = React.lazy(() => import('./pages/Blog'));
 const Cart = React.lazy(() => import('./pages/Cart'));
 const Profile = React.lazy(() => import('./pages/Profile'));
 const MyOrders = React.lazy(() => import('./pages/MyOrders'));
+const AdminDashboard = React.lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminOrders = React.lazy(() => import("./pages/admin/AdminOrders"));
+const AdminFood = React.lazy(() => import("./pages/admin/AdminFood"));
+const AdminCategories = React.lazy(() => import("./pages/admin/AdminCategories"));
+const OrderDetails = React.lazy(() => import('./pages/OrderDetails'));
 
 const App = () => {
   const { isModalOpen } = useModal();
@@ -101,7 +101,9 @@ const App = () => {
             element={
               <AdminRoute>
                 <AdminLayout>
-                  <AdminDashboard />
+                  <Suspense fallback={<Spinner />}>
+                    <AdminDashboard />
+                  </Suspense>
                 </AdminLayout>
               </AdminRoute>
             }
@@ -112,7 +114,9 @@ const App = () => {
             element={
               <AdminRoute>
                 <AdminLayout>
-                  <AdminOrders />
+                  <Suspense fallback={<Spinner />}>
+                    <AdminOrders />
+                  </Suspense>
                 </AdminLayout>
               </AdminRoute>
             }
@@ -123,7 +127,9 @@ const App = () => {
             element={
               <AdminRoute>
                 <AdminLayout>
-                  <AdminFood />
+                  <Suspense fallback={<Spinner />}>
+                    <AdminFood />
+                  </Suspense>
                 </AdminLayout>
               </AdminRoute>
             }
@@ -134,7 +140,9 @@ const App = () => {
             element={
               <AdminRoute>
                 <AdminLayout>
-                  <AdminCategories />
+                  <Suspense fallback={<Spinner />}>
+                    <AdminCategories />
+                  </Suspense>
                 </AdminLayout>
               </AdminRoute>
             }

@@ -1,25 +1,31 @@
 import { NavLink } from "react-router-dom";
+import { ChartPie, ShoppingBag, Utensils, Layers } from "lucide-react";
+
+const links = [
+    { name: "Dashboard", path: "/admin", Icon: ChartPie },
+    { name: "Orders", path: "/admin/orders", Icon: ShoppingBag },
+    { name: "Food", path: "/admin/food", Icon: Utensils },
+    { name: "Categories", path: "/admin/categories", Icon: Layers },
+];
 
 const AdminSidebar = () => {
-    const links = [
-        { name: "Dashboard", path: "/admin", icon: "fa-chart-pie" },
-        { name: "Orders", path: "/admin/orders", icon: "fa-bag-shopping" },
-        { name: "Food", path: "/admin/food", icon: "fa-utensils" },
-        { name: "Categories", path: "/admin/categories", icon: "fa-layer-group" },
-    ];
-
     return (
         <aside className="hidden md:block w-60 min-h-[calc(100vh-4rem)] bg-white border-r border-slate-200 p-4">
             <div className="flex flex-col gap-2">
-                {links.map((link) => (
+                {links.map(({ name, path, Icon }) => (
                     <NavLink
-                        key={link.path}
-                        to={link.path}
-                        end={link.path === "/admin"}
-                        className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${isActive ? "bg-red-50 text-red-500" : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}
+                        key={path}
+                        to={path}
+                        end={path === "/admin"}
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${isActive
+                                ? "bg-red-50 text-red-500"
+                                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                            }`
+                        }
                     >
-                        <i className={`fa-solid ${link.icon} w-5`}></i>
-                        {link.name}
+                        <Icon size={18} className="w-5 shrink-0" />
+                        {name}
                     </NavLink>
                 ))}
             </div>

@@ -3,6 +3,7 @@ import { useModal } from '../context/ModalContext';
 import { useUser } from '../context/UserContext';
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { Receipt } from "lucide-react";
 
 const MyOrders = () => {
 
@@ -64,7 +65,7 @@ const MyOrders = () => {
                                         </div>
 
                                         <span className="w-9 h-9 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
-                                            <i className="fa-solid fa-receipt text-sm"></i>
+                                            <Receipt size={14} />
                                         </span>
                                     </div>
 
@@ -123,7 +124,7 @@ const MyOrders = () => {
                 ) : (
                     <div className="max-w-md mx-auto py-20 text-center">
                         <div className="w-20 h-20 mx-auto rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                            <i className="fa-solid fa-receipt text-2xl text-slate-300"></i>
+                            <Receipt size={24} className="text-slate-300" />
                         </div>
 
                         <h2 className="mt-6 text-2xl font-semibold text-slate-900">No orders found</h2>

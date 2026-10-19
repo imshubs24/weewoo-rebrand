@@ -1,5 +1,6 @@
 import playStore from "../../assets/home-assets/playstore.webp";
 import appStore from "../../assets/home-assets/appstore.svg";
+import { Smartphone } from "lucide-react";
 
 const DownloadApp = () => {
     return (
@@ -27,8 +28,8 @@ const DownloadApp = () => {
                     </div>
 
                     <div className="w-full max-w-md lg:max-w-lg">
-                        <div className="rounded-2xl bg-white border border-slate-200 p-8 sm:p-10 text-center shadow-sm">
-                            <i className="fa-solid fa-mobile-screen-button text-5xl text-red-500"></i>
+                        <div className="rounded-2xl bg-white border border-slate-200 p-8 sm:p-10 text-center shadow-sm flex flex-col items-center">
+                            <Smartphone size={48} className="text-red-500" />
                             <h3 className="mt-5 text-xl font-semibold text-slate-900">WeeWoo on your phone</h3>
                             <p className="mt-2 text-sm sm:text-base text-slate-500">Your favorite meals, just a tap away.</p>
                         </div>

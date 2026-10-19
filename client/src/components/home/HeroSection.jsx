@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import sample from "../../assets/home-assets/sample.webp";
 import sample2 from "../../assets/home-assets/sample2.webp";
@@ -37,22 +38,17 @@ const HeroSection = () => {
         };
     }, []);
 
-    useEffect(() => {
-        images.forEach((image) => {
-            const img = new Image();
-            img.src = image;
-        });
-    }, []);
-
     return (
         <section className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] max-h-[800px] overflow-hidden">
 
             {/* Background Image */}
-            <div
-                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-                style={{
-                    backgroundImage: `url(${images[currentImageIndex]})`,
-                }}
+            <img
+                src={images[currentImageIndex]}
+                alt=""
+                fetchPriority={currentImageIndex === 0 ? "high" : "auto"}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700"
             />
 
             {/* Overlay */}
@@ -99,7 +95,7 @@ const HeroSection = () => {
                 className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-white/40 bg-black/20 text-white backdrop-blur-sm hover:bg-white hover:text-slate-900 transition hidden md:flex items-center justify-center"
                 aria-label="Previous image"
             >
-                <i className="fa-solid fa-chevron-left text-sm"></i>
+                <ChevronLeft size={14} />
             </button>
 
             <button
@@ -108,7 +104,7 @@ const HeroSection = () => {
                 className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-white/40 bg-black/20 text-white backdrop-blur-sm hover:bg-white hover:text-slate-900 transition hidden md:flex items-center justify-center"
                 aria-label="Next image"
             >
-                <i className="fa-solid fa-chevron-right text-sm"></i>
+                <ChevronRight size={14} />
             </button>
 
             {/* Carousel Indicators */}

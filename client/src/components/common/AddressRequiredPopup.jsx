@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import { MapPin, X } from "lucide-react";
 
 const AddressRequiredPopup = ({ onClose }) => {
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-md bg-white border border-slate-200 rounded-xl shadow-lg p-5">
             <div className="flex items-start gap-3">
                 <div className="w-10 h-10 shrink-0 rounded-full bg-red-50 flex items-center justify-center">
-                    <i className="fa-solid fa-location-dot text-red-500"></i>
+                    <MapPin size={18} className="text-red-500" />
                 </div>
 
                 <div className="flex-1">
@@ -32,7 +33,7 @@ const AddressRequiredPopup = ({ onClose }) => {
                     className="text-slate-400 hover:text-slate-600 transition-colors"
                     aria-label="Close"
                 >
-                    <i className="fa-solid fa-xmark"></i>
+                    <X size={18} />
                 </button>
             </div>
         </div>

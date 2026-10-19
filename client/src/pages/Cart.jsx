@@ -5,6 +5,8 @@ import { useToastify } from "../context/ToastifyContext";
 import { useUser } from "../context/UserContext";
 import api from "../services/api";
 import AddressRequiredPopup from "../components/common/AddressRequiredPopup.jsx";
+import loadRazorpay from "../utils/loadRazorpay.js";
+import { Utensils, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
 
 const Cart = () => {
     const { openModal } = useModal();
@@ -49,6 +51,13 @@ const Cart = () => {
                 food: item.id,
                 quantity: item.quantity,
             }));
+
+            const loaded = await loadRazorpay();
+
+            if (!loaded) {
+                notify("Unable to load payment gateway. Please try again.", "error");
+                return;
+            }
 
             const response = await api.post("/api/payment/create-order", {
                 items,
@@ -135,7 +144,7 @@ const Cart = () => {
                                         <div key={index} className={`p-5 sm:p-6 ${index !== cartItems.length - 1 ? "border-b border-slate-200" : ""}`}>
                                             <div className="flex flex-col sm:flex-row sm:items-center gap-5">
                                                 <div className="w-20 h-20 shrink-0 rounded-xl bg-slate-100 flex items-center justify-center">
-                                                    <i className="fa-solid fa-utensils text-2xl text-slate-400"></i>
+                                                    <Utensils size={24} className="text-slate-400" />
                                                 </div>
 
                                                 <div className="flex-1 min-w-0">
@@ -153,7 +162,7 @@ const Cart = () => {
                                                     <p className="w-20 text-right font-semibold text-slate-900">₹{(item.quantity * item.price).toFixed(2)}</p>
 
                                                     <button type="button" onClick={() => removeItem(item)} className="text-slate-400 hover:text-red-500 transition-colors">
-                                                        <i className="fa-regular fa-trash-can"></i>
+                                                        <Trash2 size={18} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -191,8 +200,13 @@ const Cart = () => {
                                         <span className="text-xl font-semibold text-red-500">₹{calculateTotal().toFixed(2)}</span>
                                     </div>
 
-                                    <button type="button" onClick={makePayment} className="w-full mt-7 py-3.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors">
-                                        Proceed to Checkout <i className="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                                    <button
+                                        type="button"
+                                        onClick={makePayment}
+                                        className="w-full mt-7 py-3.5 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors inline-flex items-center justify-center"
+                                    >
+                                        Proceed to Checkout
+                                        <ArrowRight size={14} className="ml-2" />
                                     </button>
 
                                     <p className="mt-4 text-xs text-center text-slate-400">You will be redirected to secure payment.</p>
@@ -204,7 +218,7 @@ const Cart = () => {
                     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
                         <div className="max-w-md mx-auto text-center">
                             <div className="w-20 h-20 mx-auto rounded-full bg-white border border-slate-200 flex items-center justify-center shadow-sm">
-                                <i className="fa-solid fa-cart-shopping text-2xl text-slate-300"></i>
+                                <ShoppingCart size={24} className="text-slate-300" />
                             </div>
                             <h2 className="mt-6 text-2xl font-semibold text-slate-900">Your cart is empty</h2>
                             <p className="mt-2 text-slate-500">Looks like you haven't added anything to your cart yet.</p>
