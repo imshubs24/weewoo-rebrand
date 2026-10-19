@@ -9,6 +9,8 @@ const AdminFood = () => {
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [editingFood, setEditingFood] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -55,11 +57,27 @@ const AdminFood = () => {
     try {
       setIsAdding(true);
 
+      const data = new FormData();
+
+      data.append("name", formData.name);
+      data.append("category", formData.category);
+      data.append("price", formData.price);
+      data.append("description", formData.description);
+
+      if (selectedImage) {
+        data.append("image", selectedImage);
+      }
+
       if (editingFood) {
-        const response = await api.put(`/api/food/${editingFood._id}`, {
-          ...formData,
-          price: Number(formData.price),
-        });
+        const response = await api.put(
+          `/api/food/${editingFood._id}`,
+          data,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
         setFoodItems((prev) =>
           prev.map((food) =>
@@ -71,12 +89,16 @@ const AdminFood = () => {
 
         notify("Food updated successfully", "success");
       } else {
-        const response = await api.post("/api/food/", {
-          ...formData,
-          price: Number(formData.price),
+        const response = await api.post("/api/food/", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
 
-        setFoodItems((prev) => [response.data.newFood, ...prev]);
+        setFoodItems((prev) => [
+          response.data.newFood,
+          ...prev,
+        ]);
 
         notify("Food added successfully", "success");
       }
@@ -85,17 +107,20 @@ const AdminFood = () => {
         name: "",
         category: "",
         price: "",
-        image: "",
         description: "",
       });
 
+      setSelectedImage(null);
+      setImagePreview("");
       setEditingFood(null);
       setIsAddFormOpen(false);
-
     } catch (error) {
       console.error("Failed to save food:", error);
 
-      notify(error.response?.data?.message || "Failed to save food", "error");
+      notify(
+        error.response?.data?.message || "Failed to save food",
+        "error"
+      );
     } finally {
       setIsAdding(false);
     }
@@ -103,14 +128,16 @@ const AdminFood = () => {
 
   const handleEditClick = (food) => {
     setEditingFood(food);
+
     setFormData({
       name: food.name,
       category: food.category?._id || food.category || "",
       price: food.price,
-      image: food.image || "",
       description: food.description || "",
     });
 
+    setSelectedImage(null);
+    setImagePreview(food.image || "");
     setIsAddFormOpen(true);
   };
 
@@ -159,6 +186,29 @@ const AdminFood = () => {
 
       notify("Failed to update food availability", "error");
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      notify("Only JPEG, PNG and WebP images are allowed", "error");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      notify("Image size must be less than 5 MB", "error");
+      e.target.value = "";
+      return;
+    }
+
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   useEffect(() => {
@@ -211,6 +261,8 @@ const AdminFood = () => {
                   image: "",
                   description: "",
                 });
+                setSelectedImage(null);
+                setImagePreview("");
               }}
               className="text-slate-400 hover:text-slate-700 text-2xl">
               &times;
@@ -265,15 +317,24 @@ const AdminFood = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Image URL</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Food Image
+              </label>
+
               <input
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleInputChange}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageChange}
                 className="w-full px-4 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-red-500"
-                placeholder="Image URL"
               />
+
+              {(imagePreview || editingFood?.image) && (
+                <img
+                  src={imagePreview || editingFood.image}
+                  alt="Food preview"
+                  className="mt-3 h-32 w-32 rounded-lg object-cover"
+                />
+              )}
             </div>
 
             <div className="md:col-span-2">
@@ -301,6 +362,8 @@ const AdminFood = () => {
                     image: "",
                     description: "",
                   });
+                  setSelectedImage(null);
+                  setImagePreview("");
                 }}
                 disabled={isAdding}
                 className="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"

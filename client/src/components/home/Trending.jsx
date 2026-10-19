@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import sample from '../../assets/trending-food/burger.webp'
 import { useCart } from '../../context/CartContext';
 
 const Trending = () => {
@@ -66,7 +65,7 @@ const Trending = () => {
                             onMouseEnter={() => handleMouseEnter(index)}
                             onMouseLeave={handleMouseLeave}
                         >
-                            <img src={sample} loading='lazy' alt="sample.jpg" className='size-60' />
+                            <img src="" loading='lazy' alt="sample.jpg" className='size-60' />
                             <p className='text-lg text-slate-700'>{item.name}</p>
                             <p className='text-red-500'><span>&#x20B9;</span>{item.price}</p>
                             <div className={`flex flex-col gap-y-2 items-center justify-center text-base select-none`}>

@@ -1,10 +1,29 @@
 const FoodMenu = require('../models/FoodMenu');
 const FoodCategory = require("../models/FoodCategory");
+const cloudinary = require("../config/cloudinary");
+const { Readable } = require("stream");
+
+const uploadToCloudinary = (file) => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: "weewoo/foods",
+                resource_type: "image",
+            },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
+
+        Readable.from(file.buffer).pipe(uploadStream);
+    });
+};
 
 // add  new food menu item
 const createFood = async (req, res, next) => {
     try {
-        const { name, category, price, image, description } = req.body;
+        const { name, category, price, description } = req.body;
 
         if (!name || !category || price === undefined) {
             return res.status(400).json({
@@ -34,11 +53,25 @@ const createFood = async (req, res, next) => {
             });
         }
 
+        let imageUrl = "";
+
+        if (req.file) {
+            if (!["image/jpeg", "image/png", "image/webp"].includes(req.file.mimetype)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Only JPEG, PNG and WebP images are allowed",
+                });
+            }
+
+            const uploadedImage = await uploadToCloudinary(req.file);
+            imageUrl = uploadedImage.secure_url;
+        }
+
         const newFood = await FoodMenu.create({
             name: name.trim(),
             category,
             price,
-            image,
+            image: imageUrl,
             description,
         });
 
@@ -175,7 +208,7 @@ const getFoodById = async (req, res, next) => {
 const updateFood = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, category, price, image, description, isAvailable } = req.body;
+        const { name, category, price, description, isAvailable } = req.body;
 
         const foodItem = await FoodMenu.findById(id);
 
@@ -201,9 +234,20 @@ const updateFood = async (req, res, next) => {
 
         if (name) foodItem.name = name.trim();
         if (price !== undefined) foodItem.price = price;
-        if (image !== undefined) foodItem.image = image;
         if (description !== undefined) foodItem.description = description;
         if (isAvailable !== undefined) foodItem.isAvailable = isAvailable;
+
+        if (req.file) {
+            if (!["image/jpeg", "image/png", "image/webp"].includes(req.file.mimetype)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Only JPEG, PNG and WebP images are allowed",
+                });
+            }
+
+            const uploadedImage = await uploadToCloudinary(req.file);
+            foodItem.image = uploadedImage.secure_url;
+        }
 
         await foodItem.save();
 
